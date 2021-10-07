@@ -1,0 +1,9 @@
+__pycache__/
+.idea/
+.vscode
+config.yml
+client_secret.json
+*.pkl
+*.json
+*.log
+*.csv

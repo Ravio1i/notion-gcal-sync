@@ -1,0 +1,40 @@
+---
+# !!! KEEP THE ORDER OF THE CONFIGURATION !!!
+
+time:
+  timezone_name: 'Europe/Berlin'
+  timezone_diff: '+02:00'
+
+notion:
+  # Page url with ?v and &p= 
+  database_url: 'https://www.notion.so/*/***?v=***&p='
+  token: '***'
+  columns:
+    name: 'Name'
+    date: 'Date'
+    tags: 'Tags'
+    description: 'Description'
+    location: 'Location'
+    last_updated_time: 'Last Updated'
+    last_synced_time: 'Last Synced'
+    gcal_event_id: 'GCal event Id'
+    gcal_calendar_name: 'Calendar'
+    gcal_calendar_id: 'GCal calendar Id'
+    to_delete: 'Delete?'
+    deleted: 'Deleted'
+  no_date_action: 'skip' # ['skip', 'today']
+
+gcal:
+  # The credentials you created in UI an downloaded
+  credentials_path: client_secret.json
+  # The token_path stores the user's access and refresh tokens as json, and is
+  # created automatically when the authorization flow completes for the first time.
+  token_path: token.json
+  # The default calendar is the main account you use when accessing gcal
+  default_calendar_id: '***@gmail.com'
+  default_calendar_name: General
+  calendars:
+    General: '***@gmail.com' # Should match default_calendar_name and default_calendar_id
+    Work: '***@group.calendar.google.com'
+  # default event length in minutes
+  default_event_length: 60
