@@ -10,9 +10,9 @@ from utils.Time import Time
 class GCalEvent(Event):
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
                  gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None, gcal_page_url: str = None,
-                 color_id: str = None, cfg: Config = None):
-        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+                 recurrence: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
+                 gcal_page_url: str = None, color_id: str = None, cfg: Config = None):
+        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrence,
                          time_last_updated, time_last_synced, notion_page_url, gcal_page_url, cfg)
         self.color_id = color_id
 
@@ -25,10 +25,11 @@ class GCalEvent(Event):
         gcal_calendar_name = obj.get('organizer', {}).get('displayName')
         location = obj.get('location', '')
         time_start, time_end, time_last_updated = cls.get_time(obj, time)
+        recurrence = obj.get('recurringEventId', '')
         notion_page_url, time_last_synced = cls.get_source(obj)
         gcal_page_url = obj.get('htmlLink', '')
         color_id = obj.get('colorId', '')
-        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrence,
                    time_last_updated, time_last_synced, notion_page_url, gcal_page_url, color_id, cfg)
 
     @classmethod
@@ -42,7 +43,7 @@ class GCalEvent(Event):
     def get_time(cls, obj: dict, time: Time) -> (datetime, datetime):
         time_last_updated = time.to_datetime(obj.get('updated'))
         try:
-            time_start = obj.get('start', { })['dateTime']
+            time_start = obj.get('start', {})['dateTime']
             time_end = obj.get('end', {})['dateTime']
             return time_start, time_end, time_last_updated
         except KeyError:

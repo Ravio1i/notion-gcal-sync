@@ -70,7 +70,7 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
     counter = 0
     for idx, el in gcal_only_df.iterrows():
         el['time_last_synced'] = gcal_client.cfg.time.now()
-        continue
+        # continue
         if counter == 10:
             break
         counter += 1
@@ -99,8 +99,10 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
     gcal_values_df.columns = [x.replace('_gcal', '') if any(k in x for k in gcal_values_df.columns) else x for x in gcal_values_df]
     gcal_values_df = gcal_values_df.loc[:, gcal_df.columns]
 
+    no_diff_columns = ['recurrence']
+
     diff_df = notion_values_df.drop(notion_specific_columns, axis=1)\
-        .compare(gcal_values_df.drop(gcal_specific_columns, axis=1), keep_shape=True, keep_equal=False)
+        .compare(gcal_values_df.drop(gcal_specific_columns, axis=1), keep_shape=True, keep_equal=False).drop(columns=no_diff_columns)
     diff_df = diff_df.dropna(axis=0, how='all').astype(object).where(pd.notnull(diff_df), '')
     diff_df.to_csv("diff.csv")
 
@@ -154,7 +156,7 @@ def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, not
         logging.info('- Deleting event {} in GCal'.format(el['name']))
 
         gcal_event = GCalEvent(**el.drop(notion_specific_columns).to_dict(), cfg=gcal_client.cfg)
-        gcal_event_res = gcal_client.get_event(gcal_event)
+        gcal_event_res = gcal_client.get_event(gcal_event.gcal_calendar_id, gcal_event.gcal_event_id)
         if not gcal_event_res.get('status'):
             logging.warning('- Event {} never existed in GCal'.format(el['name']))
         elif gcal_event_res['status'] == 'cancelled':
@@ -173,7 +175,7 @@ def main():
     with open(os.path.join(parent_dir, 'config.yml'), 'r') as yaml_file:
         yaml_cfg = yaml.safe_load(yaml_file)
 
-    cfg = Config(**yaml_cfg['gcal'], **yaml_cfg['notion'], time=Time(**yaml_cfg['time']))
+    cfg = Config(**yaml_cfg['defaults'], **yaml_cfg['gcal'], **yaml_cfg['notion'], time=Time(**yaml_cfg['time']))
 
     ###########################################################################
     # Fetching Notion Events
@@ -183,6 +185,7 @@ def main():
     notion_client = NotionClient(cfg)
     notion_events = notion_client.list_events()
     notion_df = pd.DataFrame(notion_events).astype(str)
+    print(notion_df)
     # notion_df.to_csv('notion.csv')
 
     ###########################################################################

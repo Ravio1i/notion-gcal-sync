@@ -39,13 +39,12 @@ class GCalClient:
         self.service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
         self.calendar = self.service.calendars().get(calendarId=self.cfg.default_calendar_id).execute()
 
-    def get_event(self, gcal_event: GCalEvent):
+    def get_event(self, gcal_calendar_id: str, gcal_event_id: str):
         """
         Get google calendar event from GCalEvent
-        :param gcal_event: GCalEvent
         :return: dict: response object from google calendar update
         """
-        return self.service.events().get(calendarId=gcal_event.gcal_calendar_id, eventId=gcal_event.gcal_event_id).execute()
+        return self.service.events().get(calendarId=gcal_calendar_id, eventId=gcal_event_id).execute()
 
     def list_events(self, calendar_id: str) -> List[dict]:
         """
@@ -68,11 +67,13 @@ class GCalClient:
                 if event['status'] == 'cancelled':
                     continue
                 if not event.get('summary'):
-                    logging.error('Event at {} does not have a name'.format(event['start']))
+                    logging.error('Event {} does not have a name. Skipping...'.format(event['start']))
                     continue
-
-                gcal_event = GCalEvent.from_api(event, self.cfg, self.cfg.time).dict_from_class()
-                gcal_event_items.append(gcal_event)
+                if event.get('recurrence'):
+                    logging.warning('Event {} is recurrent. Currently not supported. Skipping...'.format(event['summary']))
+                    continue
+                gcal_event = GCalEvent.from_api(event, self.cfg, self.cfg.time)
+                gcal_event_items.append(gcal_event.dict_from_class())
             page_token = gcal_events_res.get('nextPageToken')
             if not page_token:
                 break

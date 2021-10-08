@@ -8,7 +8,7 @@ import logging
 class Event:
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
                  gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
+                 recurrence: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
                  gcal_page_url: str = None, cfg: Config = None):
         self.cfg = cfg
         # Properties
@@ -38,6 +38,8 @@ class Event:
 
         self.time_start = cfg.time.to_datetime(time_start)
         self.time_end = cfg.time.to_datetime(time_end)
+        self.recurrence = recurrence
+
         # Apply default length
         if not self.cfg.time.is_date(self.time_start) and not self.cfg.time.is_date(self.time_end) and self.time_start == self.time_end:
             self.time_end = self.time_start + timedelta(minutes=self.cfg.default_event_length)

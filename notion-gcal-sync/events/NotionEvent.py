@@ -9,9 +9,9 @@ from utils.Time import Time
 class NotionEvent(Event):
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
                  gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None, gcal_page_url: str = None,
-                 notion_id: str = None, cfg: Config = None):
-        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+                 recurrence: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
+                 gcal_page_url: str = None, notion_id: str = None, cfg: Config = None):
+        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrence,
                          time_last_updated, time_last_synced, notion_page_url, gcal_page_url, cfg)
         self.notion_id = notion_id
         # self.tags = tags
@@ -24,6 +24,7 @@ class NotionEvent(Event):
         name = cls.get_name(props, cfg.col_name)
         location = cls.get_text(props, cfg.col_location)
         time_start, time_end = cls.get_time(props, cfg.col_date)
+        recurrence = cls.get_text(props, cfg.col_recurrence)
         time_last_updated = cls.get_last_edited_time(props, cfg.col_last_updated_time, cfg.time)
         time_last_synced = cls.get_text(props, cfg.col_last_synced_time)
         description = cls.get_text(props, cfg.col_description)
@@ -32,7 +33,7 @@ class NotionEvent(Event):
         gcal_calendar_name = cls.get_select(props, cfg.col_gcal_calendar_name)
         gcal_calendar_id = cls.get_select(props, cfg.col_gcal_calendar_id)
         # tags = cls.get_multiselect(props, cfg.col_tags)
-        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrence,
                    time_last_updated, time_last_synced, notion_page_url, gcal_page_url, notion_id, cfg)
 
     @classmethod
@@ -110,6 +111,13 @@ class NotionEvent(Event):
                         "start": time_start,
                         "end": time_end
                     }
+                },
+                self.cfg.col_recurrence: {
+                    "rich_text": [{
+                        "text": {
+                            "content": self.recurrence
+                        }
+                    }]
                 },
                 self.cfg.col_description: {
                     "rich_text": [{
