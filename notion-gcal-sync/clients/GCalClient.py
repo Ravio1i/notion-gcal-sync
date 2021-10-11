@@ -65,20 +65,30 @@ class GCalClient:
             print('Found {} events'.format(gcal_event_count), end='\r')
             for event in gcal_events_res['items']:
                 if event['status'] == 'cancelled':
+                    logging.debug('Event "{}" is  cancelled. Skipping...'.format(event.get('id', '')))
                     continue
                 if not event.get('summary'):
-                    logging.error('Event {} does not have a name. Skipping...'.format(event['start']))
+                    logging.error('Event "{}" at "{}" does not have a name. Skipping...'.format(event.get('id', ''), event['start']))
                     continue
                 if event.get('recurrence'):
-                    logging.warning('Event {} is recurrent. Currently not supported. Skipping...'.format(event['summary']))
+                    logging.debug('Event {} is recurrent source .Skipping...'.format(event['summary']))
                     continue
+
                 gcal_event = GCalEvent.from_api(event, self.cfg, self.cfg.time)
+                if gcal_event.gcal_calendar_id == 'skip':
+                    logging.debug('Event {} id is not valid. Skipping...'.format(event['summary']))
+                    continue
+
+                if gcal_event.recurrent_event:
+                    logging.debug('Using gcal event link for "{}" as recurrence reference'.format(gcal_event.name))
+                    gcal_res = self.get_event(gcal_event.gcal_calendar_id, gcal_event.gcal_event_id)
+                    gcal_event.recurrent_event = gcal_res['htmlLink']
                 gcal_event_items.append(gcal_event.dict_from_class())
             page_token = gcal_events_res.get('nextPageToken')
             if not page_token:
                 break
 
-        logging.info('Found {} events from calendar: {}'.format(gcal_event_count, self.cfg.get_calendar_name(calendar_id)))
+        logging.info('Found {} events from calendar: {}'.format(gcal_event_count, get_calendar_name(self.cfg.calendars, calendar_id)))
         return gcal_event_items
 
     def create_event(self, gcal_event: GCalEvent):
@@ -97,16 +107,22 @@ class GCalClient:
         :return: dict: response from google calendar update
         """
         # try:
+        if gcal_event.read_only:
+            logging.info('Not updating in gcal read only event "{}"'.format(gcal_event.name))
+            return
         return self.service.events().update(calendarId=gcal_event.gcal_calendar_id, eventId=gcal_event.gcal_event_id,
                                             body=gcal_event.body()).execute()
         # TODO: what to do about forbidden
         # except:
         #    return None
 
-    def delete_event(self, gcal_event: GCalEvent) -> dict:
+    def delete_event(self, gcal_event: GCalEvent) -> dict or None:
         """
         Deleting an event from google calendar
         :param gcal_event: GCalEvent
         :return: dict: response
         """
+        if gcal_event.read_only:
+            logging.info('Not deleting in gcal read only event "{}"'.format(gcal_event.name))
+            return
         return self.service.events().delete(calendarId=gcal_event.gcal_calendar_id, eventId=gcal_event.gcal_event_id).execute()

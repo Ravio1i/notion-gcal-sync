@@ -12,6 +12,7 @@ notion:
   columns:
     name: 'Name'
     date: 'Date'
+    recurrent_event: 'Recurrence'
     tags: 'Tags'
     description: 'Description'
     location: 'Location'
@@ -22,6 +23,7 @@ notion:
     gcal_calendar_id: 'GCal calendar Id'
     to_delete: 'Delete?'
     deleted: 'Deleted'
+    read_only: 'Read Only'
   no_date_action: 'skip' # ['skip', 'today']
 
 gcal:

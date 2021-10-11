@@ -1,4 +1,5 @@
 import logging
+
 from utils.Time import Time
 
 
@@ -16,11 +17,11 @@ class Config:
 
         # NOTION
         self.database_url = database_url
-        self.database_id = database_url[:database_url.index('?v=')].split('/')[-1]
+        self.database_id = self.get_database_id()
         self.token = token
         self.col_name = columns['name']
         self.col_date = columns['date']
-        self.col_recurrence = columns['recurrence']
+        self.col_recurrent_event = columns['recurrent_event']
         self.col_tags = columns['tags']
         self.col_description = columns['description']
         self.col_location = columns['location']
@@ -32,9 +33,29 @@ class Config:
         self.col_gcal_calendar_id = columns['gcal_calendar_id']
         self.col_to_delete = columns['to_delete']
         self.col_deleted = columns['deleted']
+        self.col_read_only = columns['read_only']
 
         # TIME
         self.time = time
+
+    def get_database_id(self):
+        #try:
+        return self.database_url[:self.database_url.index('?v=')].split('/')[-1]
+        # except:
+        #     logging.error("Invalid database url. Cannot get database id")
+        #     return None
+
+    @property
+    def database_url(self):
+        return self._database_url
+
+    @database_url.setter
+    def database_url(self, value):
+        self._database_url = value
+        if "?v=" not in value and not value.startswith("https://notion.so/"):
+            logging.error("Invalid database url. Cannot get database id")
+            self.database_id = None
+        self.database_id = self.database_url[:self.database_url.index('?v=')].split('/')[-1]
 
     @property
     def default_event_length(self):

@@ -17,4 +17,4 @@ googleapiclient.errors.HttpError: <HttpError 403 when requesting returned "Forbi
 
 - Birthdays dates get screwed
 
-- end datetime gets translated to date
+- Change of calendar in notion
