@@ -7,9 +7,10 @@ import logging
 
 class Event:
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
-                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 recurrent_event: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
-                 gcal_page_url: str = None, read_only: bool = None, cfg: Config = None):
+                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None,
+                 time_end: datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
+                 time_last_synced: str = None, notion_page_url: str = None, gcal_page_url: str = None, read_only: bool = None,
+                 cfg: Config = None):
         self.cfg = cfg
         # Properties
         self.name = name

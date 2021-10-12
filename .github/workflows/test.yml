@@ -34,13 +34,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: pytester-cov
-      # You may pin to the exact commit or the version.
-      # uses: alexanderdamiani/pytester-cov@5caff5c16a1c8fa4b91025b7acbdeca438084df7
-      uses: alexanderdamiani/pytester-cov@v1.2.1
-      with:
-        # root directory to recursively search for .py files
-        pytest-root-dir: google-gcal-sync
-        # directory with pytest tests. if left empty will identify test(s) dir by default
-        pytest-tests-dir: tests
-        # requirements filepath for project

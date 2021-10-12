@@ -8,11 +8,13 @@ from utils.Time import Time
 
 class NotionEvent(Event):
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
-                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 recurrent_event: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
-                 gcal_page_url: str = None, notion_id: str = None, read_only: bool = None, cfg: Config = None):
-        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
-                         recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url, read_only, cfg)
+                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None,
+                 time_end: datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
+                 time_last_synced: str = None, notion_page_url: str = None,  gcal_page_url: str = None, notion_id: str = None,
+                 read_only: bool = None, cfg: Config = None):
+        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start,
+                         time_end, recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url,
+                         read_only, cfg)
         self.notion_id = notion_id
         # self.tags = tags
 
@@ -34,8 +36,9 @@ class NotionEvent(Event):
         gcal_calendar_id = cls.get_select(props, cfg.col_gcal_calendar_id)
         read_only = cls.get_checkbox(props, cfg.col_read_only)
         # tags = cls.get_multiselect(props, cfg.col_tags)
-        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrent_event,
-                   time_last_updated, time_last_synced, notion_page_url, gcal_page_url, notion_id, read_only, cfg)
+        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+                   recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url, notion_id, read_only,
+                   cfg)
 
     @classmethod
     def get_name(cls, properties: dict, column: str) -> str:

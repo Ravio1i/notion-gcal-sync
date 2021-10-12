@@ -32,7 +32,8 @@ def time():
 
 @pytest.fixture()
 def config(columns, time):
-    return Config(60, "skip", "dude@gmail.com", "Default", {"Default": "dude@gmail.com", "Calender2": "abc123@group.calendar.google.com"},
+    return Config(60, "skip", "dude@gmail.com", "Default",
+                  {"Default": "dude@gmail.com", "Calender2": "abc123@group.calendar.google.com"},
                   "https://www.notion.so/bla", "SECRET", columns, time)
 
 
@@ -92,4 +93,3 @@ def test_is_valid_calendar_id(config, test_calendar_id, expected):
      ("error@group.calendar.google.com", False), (None, False)])
 def test_is_valid_calendar_name(config, test_calendar_name, expected):
     assert config.is_valid_calendar_name(test_calendar_name) == expected
-

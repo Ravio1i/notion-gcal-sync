@@ -147,7 +147,8 @@ def test_get_checkbox_invalid():
     assert not NotionEvent.get_checkbox(properties, column)
 
 # def test_body():
-    # NotionEvent("Name", "Test", "Heaven", "event_id", "calendar_name", "calendar_id", datetime(2021, 2, 1), datetime(2021, 2, 2), "",
+    # NotionEvent("Name", "Test", "Heaven", "event_id", "calendar_name", "calendar_id", datetime(2021, 2, 1),
+    #     datetime(2021, 2, 2), "",
     #             datetime(2021, 1, 1, 13, 37), "NSYNC", "https://notion.so", "https://google.com", "notion_id", False, )
     # test_body = {
     #     "properties": {

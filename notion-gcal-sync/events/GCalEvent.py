@@ -9,11 +9,13 @@ from utils.Time import Time
 
 class GCalEvent(Event):
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
-                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None, time_end: datetime = None,
-                 recurrent_event: str = None, time_last_updated: datetime = None, time_last_synced: str = None, notion_page_url: str = None,
-                 gcal_page_url: str = None, color_id: str = None, read_only: bool = None, cfg: Config = None):
-        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
-                         recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url, read_only, cfg)
+                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None,
+                 time_end: datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
+                 time_last_synced: str = None, notion_page_url: str = None, gcal_page_url: str = None, color_id: str = None,
+                 read_only: bool = None, cfg: Config = None):
+        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start,
+                         time_end, recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url,
+                         read_only, cfg)
         self.color_id = color_id
 
     @classmethod
@@ -28,8 +30,9 @@ class GCalEvent(Event):
         gcal_page_url = obj.get('htmlLink', '')
         color_id = obj.get('colorId', '')
         read_only = obj.get('privateCopy', False)
-        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end, recurrent_event,
-                   time_last_updated, time_last_synced, notion_page_url, gcal_page_url, color_id, read_only, cfg)
+        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
+                   recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url, color_id, read_only,
+                   cfg)
 
     @classmethod
     def get_meta(cls, obj: dict) -> (str, str):

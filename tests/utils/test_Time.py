@@ -4,10 +4,6 @@ from utils.Time import Time
 from datetime import datetime, timedelta, timezone
 
 
-def test_is_date():
-    assert Time.is_date(None) is None
-
-
 @pytest.mark.parametrize(
     "test_input, expected",
     [("2017-10-25T19:00:00.000+02:00", False),
