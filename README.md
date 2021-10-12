@@ -1,4 +1,4 @@
-[![Python application](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml/badge.svg)](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml)
+[![Unit Tests](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml/badge.svg)](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml)
 # Notion-GCal-Sync
 
 ## Setup
