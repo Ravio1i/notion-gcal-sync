@@ -9,6 +9,9 @@ from utils.Time import Time
 
 @pytest.fixture()
 def columns():
+    """
+    :return:
+    """
     return {
         "name": "Name",
         "date": 'Date',
@@ -30,11 +33,19 @@ def columns():
 
 @pytest.fixture()
 def time():
+    """
+    :return:
+    """
     return Time("Europe/Berlin", "+02:00")
 
 
 @pytest.fixture()
 def config(columns, time):
+    """
+    :param columns:
+    :param time:
+    :return:
+    """
     return Config(60, "skip", "dude@gmail.com", "Default",
                   {"Default": "dude@gmail.com", "Calendar2": "abc123@group.calendar.google.com"},
                   "https://www.notion.so/bla", "SECRET", columns, time)
@@ -42,6 +53,10 @@ def config(columns, time):
 
 @pytest.fixture()
 def event(config):
+    """
+    :param config:
+    :return:
+    """
     return Event(name="name", description="description", location="Vatikan", gcal_event_id="abc123",
                  gcal_calendar_name="Default", gcal_calendar_id="dude@gmail.com", time_start=datetime(2021, 8, 1, 12, 30),
                  time_end=datetime(2021, 8, 1, 14, 30), recurrent_event="", time_last_updated=datetime(2021, 10, 1, 2, 30),

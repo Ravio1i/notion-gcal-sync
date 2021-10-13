@@ -3,6 +3,10 @@
 
 ## Setup
 
+Requires `Python >= 3.9`
+
+
+
 ### Google calendar
 
 1. Create credentials like [this](https://developers.google.com/workspace/guides/create-credentials).
