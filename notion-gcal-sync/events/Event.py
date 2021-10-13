@@ -7,8 +7,8 @@ import logging
 
 class Event:
     def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
-                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None,
-                 time_end: datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
+                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: str or datetime = None,
+                 time_end: str or datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
                  time_last_synced: str = None, notion_page_url: str = None, gcal_page_url: str = None, read_only: bool = None,
                  cfg: Config = None):
         self.cfg = cfg
@@ -36,14 +36,22 @@ class Event:
         self.time_last_synced = time_last_synced
         self.notion_page_url = notion_page_url
         self.gcal_page_url = gcal_page_url
-        self.read_only = True if read_only in [True, 'True'] else False
+        self.read_only = read_only
 
     def dict_from_class(self):
         return dict(
-            (key, value)
-            for (key, value) in self.__dict__.items()
-            if not key.startswith('_') and key != "cfg"
+                (key.replace('_', '', 1), value) if key.startswith('_') else (key,  value)
+                for (key, value) in self.__dict__.items()
+                if not key.startswith('__') and key != "cfg"
         )
+
+    @property
+    def read_only(self):
+        return self._read_only
+
+    @read_only.setter
+    def read_only(self, value):
+        self._read_only = True if value in [True, 'True'] else False
 
     def set_calendar(self, gcal_calendar_id: str, gcal_calendar_name: str) -> (str, str):
         """
