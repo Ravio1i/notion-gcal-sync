@@ -14,26 +14,34 @@ class NotionClient:
         self.client = Client(auth=self.cfg.token)
 
     def list_events(self, delete: bool = False):
-        notion_events = []
-        notion_events_res = self.query_items(delete)
-        logging.info("Found {} event(s) in Notion".format(len(notion_events_res)))
-        for i, obj in enumerate(notion_events_res):
-            notion_event = NotionEvent.from_api(obj, self.cfg)
+        cursor = None
+        notion_event_items = []
+        notion_event_count = 0
+        while True:
+            notion_event_res = self.query_items(delete, cursor=cursor)
+            notion_event_count += len(notion_event_res['results'])
+            print('Found {} events'.format(notion_event_count), end='\r')
+            for i, obj in enumerate(notion_event_res['results']):
+                notion_event = NotionEvent.from_api(obj, self.cfg)
 
-            if not notion_event.time_start and self.cfg.no_date_action == 'skip':
-                logging.warning('Skipping event {} with no date specified'.format(notion_event.name))
-                continue
+                if not notion_event.time_start and self.cfg.no_date_action == 'skip':
+                    logging.warning('Skipping event {} with no date specified'.format(notion_event.name))
+                    continue
 
-            if not notion_event.time_start and self.cfg.no_date_action == 'today':
-                logging.warning('Event {} with no date set to today'.format(notion_event.name))
-                notion_event.time_start = notion_event.time_end = date.today()
+                if not notion_event.time_start and self.cfg.no_date_action == 'today':
+                    logging.warning('Event {} with no date set to today'.format(notion_event.name))
+                    notion_event.time_start = notion_event.time_end = date.today()
 
-            notion_events.append(notion_event.dict_from_class())
-        return notion_events
+                notion_event_items.append(notion_event.dict_from_class())
+            if not notion_event_res['has_more']:
+                break
+            cursor = notion_event_res['next_cursor']
 
-    def query_items(self, delete: bool = False):
-        return self.client.databases.query(
-            **{
+        logging.info("Found {} event(s) in Notion".format(len(notion_event_items)))
+        return notion_event_items
+
+    def query_items(self, delete: bool = False, cursor: str = None):
+        body = {
                 'database_id': self.cfg.database_id,
                 'filter': {
                     'and': [
@@ -49,7 +57,11 @@ class NotionClient:
                             }
                         }]
                 }
-            })['results']
+            }
+        if cursor:
+            body['start_cursor'] = cursor
+
+        return self.client.databases.query(**body)
 
     def create_event(self, notion_event: NotionEvent) -> dict:
         header = {"parent": {"database_id": self.cfg.database_id}}

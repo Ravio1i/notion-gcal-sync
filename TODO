@@ -2,7 +2,7 @@ Feature
 - How to handle recurrent events
 - Add delete from google: search for cancelled (only in period of time?)
 - Add color from google to notion
-
+- Add Time min and time max to improve performance
 
 Improvements
 - Create Event class for deriving
