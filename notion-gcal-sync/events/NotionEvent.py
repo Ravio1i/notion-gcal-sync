@@ -22,7 +22,7 @@ class NotionEvent(Event):
     def from_api(cls, obj: dict, cfg: Config):
         props = obj['properties']
         notion_id = obj['id']
-        notion_page_url = cfg.database_url + notion_id.replace('-', '')
+        notion_page_url = obj['url']
         name = cls.get_name(props, cfg.col_name)
         location = cls.get_text(props, cfg.col_location)
         time_start, time_end = cls.get_time(props, cfg.col_date)

@@ -70,7 +70,6 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
     gcal_only_df.columns = [x.replace('_gcal', '') if any(k in x for k in gcal_only_df.columns) else x for x in gcal_only_df]
     gcal_only_df = gcal_only_df.loc[:, gcal_df.columns]
     logging.info('Found {} event(s) to be created in Notion'.format(len(gcal_only_df)))
-    # counter = 0
     for idx, el in gcal_only_df.iterrows():
         el['time_last_synced'] = gcal_client.cfg.time.now()
         logging.info('- Creating event "{}" in Notion'.format(el['name']))
