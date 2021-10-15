@@ -1,6 +1,6 @@
 import logging
 
-from utils.Time import Time
+from utils import Time
 
 
 class Config:

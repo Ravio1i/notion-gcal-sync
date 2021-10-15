@@ -49,10 +49,14 @@ class Time:
         if not date_str:
             return None
 
+        # Replace UTC with +00:00
         date_str = date_str.replace('Z', '+00:00')
 
         if self.is_date(date_str):
             return datetime.fromisoformat(date_str)
 
         dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
-        return dt.astimezone(timezone(self.timezone_diff_delta))
+        offset = datetime.utcoffset(dt)
+        if offset:
+            dt = dt + (self.timezone_diff_delta - offset)
+        return dt.replace(tzinfo=timezone(self.timezone_diff_delta))

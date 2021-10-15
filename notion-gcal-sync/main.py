@@ -4,12 +4,12 @@ import pandas as pd
 import yaml
 
 from clients.GCalClient import GCalClient
-from Config import Config
+from config import Config
 from events.GCalEvent import GCalEvent
 
 from clients.NotionClient import NotionClient
 from events.NotionEvent import NotionEvent
-from utils.Time import Time
+from utils import Time
 
 import os
 
@@ -31,6 +31,13 @@ def update_gcal_link(notion_client: NotionClient, notion_event: NotionEvent, gca
         logging.info('- Updating gcal page url for event "{}" in Notion'.format(notion_event.name))
         notion_event.gcal_page_url = gcal_gcal_page_url + '&ctz=' + notion_client.cfg.time.timezone_name
         notion_client.update_event(notion_event)
+
+
+def update_notion_link(gcal_client: GCalClient, gcal_event: GCalEvent, notion_page_url: str):
+    if notion_page_url != gcal_event.notion_page_url:
+        logging.info('- Updating notion page url for event "{}" in GCal'.format(gcal_event.name))
+        gcal_client.notion_page_url = notion_page_url
+        gcal_client.update_event(gcal_event)
 
 
 def create_gcal_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, notion_df: pd.DataFrame,
@@ -59,7 +66,11 @@ def create_gcal_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client:
         notion_event.gcal_event_id = gcal_event_res['id']
         notion_event.gcal_page_url = gcal_event_res['htmlLink']
         # Update on notion to be synchronized
-        notion_client.update_event(notion_event)
+        notion_event_res = notion_client.update_event(notion_event)
+        if not notion_event_res:
+            return
+        gcal_event.gcal_event_id = gcal_event_res['id']
+        update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
 
 
 def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, gcal_df: pd.DataFrame,
@@ -92,18 +103,21 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
     notion_values_df = df.loc[df['_merge'] == 'both']
     gcal_values_df = notion_values_df.copy()
 
+    # Take these values if notion is newer
     notion_values_df.columns = [
         x.replace('_notion', '')
         if any(k in x for k in notion_values_df.columns)
         else x for x in notion_values_df]
-    notion_values_df = notion_values_df.loc[notion_values_df['read_only'] == "False", notion_df.columns]
+    notion_values_df = notion_values_df[notion_df.columns].where(notion_values_df['read_only'] == "False").dropna()
 
+    # Take these values if gcal is newer
     gcal_values_df.columns = [
         x.replace('_gcal', '')
         if any(k in x for k in gcal_values_df.columns)
         else x for x in gcal_values_df]
-    gcal_values_df = gcal_values_df.loc[gcal_values_df['read_only'] == "False", gcal_df.columns]
+    gcal_values_df = gcal_values_df[gcal_df.columns].where(gcal_values_df['read_only'] == "False").dropna()
 
+    # Comparing the notion values to the gcal values
     diff_df = notion_values_df.drop(notion_specific_columns, axis=1) \
         .compare(gcal_values_df.drop(gcal_specific_columns, axis=1), keep_shape=True, keep_equal=False)
     diff_df = diff_df.dropna(axis=0, how='all').astype(object).where(pd.notnull(diff_df), '')
@@ -111,12 +125,12 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
 
     logging.info('Found {} event(s) to be updated'.format(len(diff_df)))
     for idx, el in diff_df.iterrows():
+        # Get the values from the notion values
         notion_updates = notion_values_df.iloc[idx]
-
         # Nothing is newer but somewhere this is a difference
         if not el['time_last_updated']['self'] or not el['time_last_updated']['other']:
-            logging.error("The events is synced, but still there is a difference")
-            logging.error(df.iloc[idx].to_dict())
+            logging.error("The event is synced, but still there is a difference")
+            logging.error(notion_updates.to_dict())
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
             notion_client.set_sync_error(notion_event)
             continue
@@ -133,10 +147,14 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
             gcal_event = GCalEvent(**notion_updates.drop(notion_specific_columns).to_dict(), cfg=gcal_client.cfg)
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
-                return
+                continue
             logging.info('- Synchronize event {} in Notion'.format(notion_updates['name']))
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
-            notion_client.update_event(notion_event)
+            notion_event_res = notion_client.update_event(notion_event)
+            if not notion_event_res:
+                continue
+            gcal_event.gcal_event_id = gcal_event_res['id']
+            update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
             update_gcal_link(notion_client, notion_event, gcal_event_res['htmlLink'])
 
         # GCal is newer
@@ -148,14 +166,17 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
             logging.info('- Updating event "{}" in Notion'.format(gcal_updates['name']))
             notion_event = NotionEvent(**gcal_updates.drop(gcal_specific_columns).to_dict(),
                                        notion_id=notion_updates['notion_id'], cfg=notion_client.cfg)
-            notion_client.update_event(notion_event)
+            notion_event_res = notion_client.update_event(notion_event)
+            if not notion_event_res:
+                continue
 
             logging.info('- Synchronize event {} in GCal'.format(gcal_updates['name']))
             gcal_event = GCalEvent(**gcal_updates.to_dict(), cfg=gcal_client.cfg)
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
-                return
+                continue
             update_gcal_link(notion_client, notion_event, gcal_event_res['htmlLink'])
+            update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
 
 
 def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, notion_specific_columns: list):

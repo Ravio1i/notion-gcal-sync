@@ -4,7 +4,7 @@ from datetime import date
 
 from notion_client import Client
 
-from Config import Config
+from config import Config
 from events.NotionEvent import NotionEvent
 
 

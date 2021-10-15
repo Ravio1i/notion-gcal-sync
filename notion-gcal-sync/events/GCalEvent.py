@@ -2,9 +2,9 @@ import logging
 from datetime import datetime, timedelta
 from typing import Union, Optional, Any, TypedDict
 
-from Config import Config
+from config import Config
 from events.Event import Event
-from utils.Time import Time
+from utils import Time
 
 
 class GCalEvent(Event):

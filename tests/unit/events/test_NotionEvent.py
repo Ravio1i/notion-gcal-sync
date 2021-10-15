@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 import pytest
 
 from events.NotionEvent import NotionEvent
-from utils.Time import Time
+from utils import Time
 
 
 def test_get_name():

@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-from Config import Config
+from config import Config
 from events.GCalEvent import GCalEvent
 
 current_dir = os.path.dirname(__file__)

@@ -2,9 +2,9 @@ from datetime import datetime
 
 import pytest
 
-from Config import Config
+from config import Config
 from events.Event import Event
-from utils.Time import Time
+from utils import Time
 
 
 @pytest.fixture()

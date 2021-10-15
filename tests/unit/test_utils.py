@@ -1,6 +1,8 @@
+from zoneinfo import ZoneInfo
+
 import pytest
 
-from utils.Time import Time
+from utils import Time
 from datetime import datetime, timedelta, timezone
 
 
@@ -55,6 +57,11 @@ def time():
      ("2017-10-25T10:10+03:00", datetime(2017, 10, 25, 9, 10, tzinfo=timezone(timedelta(seconds=7200))))])
 def test_str_to_datetime(time, test_input, expected):
     assert time.str_to_datetime(test_input) == expected
+
+
+def test_utc_str_to_datetime():
+    time = Time("UTC", "+00:00")
+    assert time.str_to_datetime("2017-10-25T10:10+03:00") == datetime(2017, 10, 25, 7, 10, tzinfo=ZoneInfo("UTC"))
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from Config import Config
+from config import Config
 
 import logging
 
