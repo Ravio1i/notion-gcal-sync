@@ -1,20 +1,12 @@
 Feature
-- How to handle recurrent events
 - Add delete from google: search for cancelled (only in period of time?)
 - Add color from google to notion
 - Add Time min and time max to improve performance
 
 Improvements
-- Create Event class for deriving
-- Move self._cfg and time somehow out of classes
 - Use delete as property instead of search separately
-- empty notion page cannot determine notion_specific columns
-- Fix warning error: display name of event
 
 Bugs
 - Forbidden:
 googleapiclient.errors.HttpError: <HttpError 403 when requesting returned "Forbidden". Details: "[{'domain': 'global', 'reason': 'forbidden', 'message': 'Forbidden'}]">
-
-- Birthdays dates get screwed
-
 - Change of calendar in notion

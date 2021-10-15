@@ -82,6 +82,7 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
     gcal_only_df = gcal_only_df.loc[:, gcal_df.columns]
     logging.info('Found {} event(s) to be created in Notion'.format(len(gcal_only_df)))
     for idx, el in gcal_only_df.iterrows():
+        continue
         el['time_last_synced'] = gcal_client.cfg.time.now()
         logging.info('- Creating event "{}" in Notion'.format(el['name']))
         notion_event = NotionEvent(**el.drop(gcal_specific_columns).to_dict(), cfg=notion_client.cfg)
@@ -108,14 +109,14 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
         x.replace('_notion', '')
         if any(k in x for k in notion_values_df.columns)
         else x for x in notion_values_df]
-    notion_values_df = notion_values_df[notion_df.columns].where(notion_values_df['read_only'] == "False").dropna()
+    notion_values_df = notion_values_df[notion_df.columns] # .where(notion_values_df['read_only'] == "False").dropna()
 
     # Take these values if gcal is newer
     gcal_values_df.columns = [
         x.replace('_gcal', '')
         if any(k in x for k in gcal_values_df.columns)
         else x for x in gcal_values_df]
-    gcal_values_df = gcal_values_df[gcal_df.columns].where(gcal_values_df['read_only'] == "False").dropna()
+    gcal_values_df = gcal_values_df[gcal_df.columns] # .where(gcal_values_df['read_only'] == "False").dropna()
 
     # Comparing the notion values to the gcal values
     diff_df = notion_values_df.drop(notion_specific_columns, axis=1) \
@@ -126,12 +127,17 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
     logging.info('Found {} event(s) to be updated'.format(len(diff_df)))
     for idx, el in diff_df.iterrows():
         # Get the values from the notion values
-        notion_updates = notion_values_df.iloc[idx]
+        gcal_updates = gcal_values_df.iloc[idx]
         # Nothing is newer but somewhere this is a difference
+        if gcal_updates['read_only'] == "True":
+            continue
+
+        notion_updates = notion_values_df.iloc[idx]
         if not el['time_last_updated']['self'] or not el['time_last_updated']['other']:
-            logging.error("The event is synced, but still there is a difference")
-            logging.error(notion_updates.to_dict())
+            logging.error('The event "{}" is synced, but still there is a difference'.format(notion_updates['name']))
+            logging.error(el.dropna().to_dict())
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
+            logging.error("Setting sync status to ERROR")
             notion_client.set_sync_error(notion_event)
             continue
 
@@ -148,7 +154,7 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
                 continue
-            logging.info('- Synchronize event {} in Notion'.format(notion_updates['name']))
+            logging.info('- Synchronize event "{}" in Notion'.format(notion_updates['name']))
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:
@@ -159,7 +165,6 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
 
         # GCal is newer
         if notion_last_updated < gcal_last_updated:
-            gcal_updates = gcal_values_df.iloc[idx]
             gcal_updates['time_last_synced'] = gcal_client.cfg.time.now()
 
             logging.info('Event "{}" has an update in GCal'.format(gcal_updates['name']))
@@ -170,7 +175,7 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
             if not notion_event_res:
                 continue
 
-            logging.info('- Synchronize event {} in GCal'.format(gcal_updates['name']))
+            logging.info('- Synchronize event "{}" in GCal'.format(gcal_updates['name']))
             gcal_event = GCalEvent(**gcal_updates.to_dict(), cfg=gcal_client.cfg)
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:

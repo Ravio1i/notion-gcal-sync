@@ -30,3 +30,9 @@ BE AWARE OF THE FOLLOWING:
 * Goals defined from calendar apps are skipped.
 * Recurrent original events are skipped. Recurrent occurrences of events are created one by one in notion. 
   Changing in notion will change only an occurrence in GCal.
+
+
+## Notes
+
+With around ~2500 events in gcal the sync:
+* to get all events took ~1min
