@@ -57,6 +57,6 @@ class Time:
 
         dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
         offset = datetime.utcoffset(dt)
-        if offset:
+        if offset is not None:
             dt = dt + (self.timezone_diff_delta - offset)
         return dt.replace(tzinfo=timezone(self.timezone_diff_delta))
