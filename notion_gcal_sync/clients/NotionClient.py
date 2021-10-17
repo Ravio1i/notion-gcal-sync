@@ -1,11 +1,10 @@
 import logging
-
 from datetime import date
 
 from notion_client import Client
 
-from config import Config
-from events.NotionEvent import NotionEvent
+from ..config import Config
+from ..events.NotionEvent import NotionEvent
 
 
 class NotionClient:
@@ -93,3 +92,10 @@ class NotionClient:
                 }
             }
         })
+
+    def update_gcal_link(self, notion_event: NotionEvent, gcal_gcal_page_url: str):
+        if gcal_gcal_page_url == notion_event.gcal_page_url.replace('&ctz=' + self.cfg.time.timezone_name, ''):
+            return
+        logging.info('- Updating gcal page url for event "{}" in Notion'.format(notion_event.name))
+        notion_event.gcal_page_url = gcal_gcal_page_url + '&ctz=' + self.cfg.time.timezone_name
+        self.update_event(notion_event)

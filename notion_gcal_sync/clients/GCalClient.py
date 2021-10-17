@@ -8,11 +8,11 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-from config import Config
-from events.GCalEvent import GCalEvent
+from ..config import Config
+from ..events.GCalEvent import GCalEvent
 
 current_dir = os.path.dirname(__file__)
-root_dir = os.path.dirname(os.path.dirname(current_dir))
+root_dir = os.path.dirname(current_dir)
 
 
 class GCalClient:
@@ -128,3 +128,10 @@ class GCalClient:
             logging.info('Not deleting in gcal read only event "{}"'.format(gcal_event.name))
             return
         return self.service.events().delete(calendarId=gcal_event.gcal_calendar_id, eventId=gcal_event.gcal_event_id).execute()
+
+    def update_notion_link(self, gcal_event: GCalEvent, notion_page_url: str):
+        if notion_page_url == gcal_event.notion_page_url:
+            return
+        logging.info('- Updating notion page url for event "{}" in GCal'.format(gcal_event.name))
+        gcal_event.notion_page_url = notion_page_url
+        self.update_event(gcal_event)

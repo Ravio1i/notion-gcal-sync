@@ -1,20 +1,15 @@
 import logging
+import os
 
 import pandas as pd
 import yaml
 
-from clients.GCalClient import GCalClient
-from config import Config
-from events.GCalEvent import GCalEvent
-
-from clients.NotionClient import NotionClient
-from events.NotionEvent import NotionEvent
-from utils import Time
-
-import os
-
-current_dir = os.path.dirname(__file__)
-parent_dir = os.path.dirname(current_dir)
+from .clients.GCalClient import GCalClient
+from .clients.NotionClient import NotionClient
+from .config import Config
+from .events.GCalEvent import GCalEvent
+from .events.NotionEvent import NotionEvent
+from .utils import Time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,19 +20,7 @@ logging.basicConfig(
     ]
 )
 
-
-def update_gcal_link(notion_client: NotionClient, notion_event: NotionEvent, gcal_gcal_page_url: str):
-    if gcal_gcal_page_url != notion_event.gcal_page_url.replace('&ctz=' + notion_client.cfg.time.timezone_name, ''):
-        logging.info('- Updating gcal page url for event "{}" in Notion'.format(notion_event.name))
-        notion_event.gcal_page_url = gcal_gcal_page_url + '&ctz=' + notion_client.cfg.time.timezone_name
-        notion_client.update_event(notion_event)
-
-
-def update_notion_link(gcal_client: GCalClient, gcal_event: GCalEvent, notion_page_url: str):
-    if notion_page_url != gcal_event.notion_page_url:
-        logging.info('- Updating notion page url for event "{}" in GCal'.format(gcal_event.name))
-        gcal_client.notion_page_url = notion_page_url
-        gcal_client.update_event(gcal_event)
+current_dir = os.path.dirname(__file__)
 
 
 def create_gcal_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, notion_df: pd.DataFrame,
@@ -70,7 +53,7 @@ def create_gcal_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client:
         if not notion_event_res:
             return
         gcal_event.gcal_event_id = gcal_event_res['id']
-        update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
+        gcal_client.update_notion_link(gcal_event, notion_event_res['url'])
 
 
 def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, gcal_df: pd.DataFrame,
@@ -82,7 +65,6 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
     gcal_only_df = gcal_only_df.loc[:, gcal_df.columns]
     logging.info('Found {} event(s) to be created in Notion'.format(len(gcal_only_df)))
     for idx, el in gcal_only_df.iterrows():
-        continue
         el['time_last_synced'] = gcal_client.cfg.time.now()
         logging.info('- Creating event "{}" in Notion'.format(el['name']))
         notion_event = NotionEvent(**el.drop(gcal_specific_columns).to_dict(), cfg=notion_client.cfg)
@@ -95,7 +77,7 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
         if not gcal_event_res:
             return
         notion_event.notion_id = notion_event_res['id']
-        update_gcal_link(notion_client, notion_event, gcal_event_res['htmlLink'])
+        notion_client.update_gcal_link(notion_event, gcal_event_res['htmlLink'])
 
 
 def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFrame, gcal_specific_columns: list,
@@ -109,14 +91,14 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
         x.replace('_notion', '')
         if any(k in x for k in notion_values_df.columns)
         else x for x in notion_values_df]
-    notion_values_df = notion_values_df[notion_df.columns] # .where(notion_values_df['read_only'] == "False").dropna()
+    notion_values_df = notion_values_df[notion_df.columns]
 
     # Take these values if gcal is newer
     gcal_values_df.columns = [
         x.replace('_gcal', '')
         if any(k in x for k in gcal_values_df.columns)
         else x for x in gcal_values_df]
-    gcal_values_df = gcal_values_df[gcal_df.columns] # .where(gcal_values_df['read_only'] == "False").dropna()
+    gcal_values_df = gcal_values_df[gcal_df.columns]
 
     # Comparing the notion values to the gcal values
     diff_df = notion_values_df.drop(notion_specific_columns, axis=1) \
@@ -154,14 +136,15 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
                 continue
+
             logging.info('- Synchronize event "{}" in Notion'.format(notion_updates['name']))
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
+            notion_event.gcal_page_url = gcal_event_res['htmlLink']
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:
                 continue
             gcal_event.gcal_event_id = gcal_event_res['id']
-            update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
-            update_gcal_link(notion_client, notion_event, gcal_event_res['htmlLink'])
+            gcal_client.update_notion_link(gcal_event, notion_event_res['url'])
 
         # GCal is newer
         if notion_last_updated < gcal_last_updated:
@@ -177,11 +160,11 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
 
             logging.info('- Synchronize event "{}" in GCal'.format(gcal_updates['name']))
             gcal_event = GCalEvent(**gcal_updates.to_dict(), cfg=gcal_client.cfg)
+            gcal_event.notion_page_url = notion_event_res['url']
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
                 continue
-            update_gcal_link(notion_client, notion_event, gcal_event_res['htmlLink'])
-            update_notion_link(gcal_client, gcal_event, notion_event_res['url'])
+            notion_client.update_gcal_link(notion_event, gcal_event_res['htmlLink'])
 
 
 def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, notion_specific_columns: list):
@@ -205,11 +188,26 @@ def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, not
         notion_client.delete_event(notion_event)
 
 
+def validate_paths():
+    config_file = os.path.join(current_dir, 'config.yml')
+    token_file = os.path.join(current_dir, 'token.json')
+    credentials_files = os.path.join(current_dir, 'client_credentials.json')
+    if not os.path.exists(config_file):
+        logging.error("{} does not exist. Make sure the config.yml exists with the right keys".format(config_file))
+        raise FileNotFoundError
+    if not os.path.exists(token_file) and not os.path.exists(credentials_files):
+        logging.error("{} or {} does not exist. Follow the README to obtain a client credential from Google API."
+                      .format(token_file, credentials_files))
+        raise FileNotFoundError
+
+
 def main():
     logging.info('=' * 100)
 
-    with open(os.path.join(parent_dir, 'config.yml'), 'r') as yaml_file:
+    with open(os.path.join(current_dir, 'config.yml'), 'r') as yaml_file:
         yaml_cfg = yaml.safe_load(yaml_file)
+
+    validate_paths()
 
     cfg = Config(**yaml_cfg['defaults'], **yaml_cfg['gcal'], **yaml_cfg['notion'], time=Time(**yaml_cfg['time']))
 
@@ -270,7 +268,3 @@ def main():
     update_events(df, gcal_client, gcal_df, gcal_specific_columns, notion_client, notion_df, notion_specific_columns)
     # GCAL events to be deleted
     delete_gcal_events(notion_client, gcal_client, notion_specific_columns)
-
-
-if __name__ == '__main__':
-    main()

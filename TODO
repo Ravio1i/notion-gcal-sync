@@ -5,6 +5,8 @@ Feature
 
 Improvements
 - Use delete as property instead of search separately
+- Remove the need of &p= in the config.yml
+- Remove duplicate default calendar usage in config.yml
 
 Bugs
 - Forbidden:

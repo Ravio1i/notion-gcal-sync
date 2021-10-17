@@ -1,9 +1,9 @@
-from datetime import datetime
 import logging
+from datetime import datetime
 
-from config import Config
-from events.Event import Event
-from utils import Time
+from ..config import Config
+from ..events.Event import Event
+from ..utils import Time
 
 
 class NotionEvent(Event):

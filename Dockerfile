@@ -2,6 +2,6 @@ FROM docker.io/python:latest
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install .
 
-RUN python main.py
+ENTRYPOINT ["notion-gcal-sync"]

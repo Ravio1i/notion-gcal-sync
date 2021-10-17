@@ -1,8 +1,7 @@
+import logging
 from datetime import datetime, timedelta
 
-from config import Config
-
-import logging
+from ..config import Config
 
 
 class Event:
