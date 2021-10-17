@@ -2,8 +2,8 @@ from datetime import datetime, timezone, timedelta
 
 import pytest
 
-from events.NotionEvent import NotionEvent
-from utils import Time
+from notion_gcal_sync.events.NotionEvent import NotionEvent
+from notion_gcal_sync.utils import Time
 
 
 def test_get_name():

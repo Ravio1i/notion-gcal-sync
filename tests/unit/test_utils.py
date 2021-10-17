@@ -1,9 +1,9 @@
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 import pytest
 
-from utils import Time
-from datetime import datetime, timedelta, timezone
+from notion_gcal_sync.utils import Time
 
 
 @pytest.mark.parametrize(

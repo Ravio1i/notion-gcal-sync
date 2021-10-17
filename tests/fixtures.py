@@ -2,9 +2,9 @@ from datetime import datetime
 
 import pytest
 
-from config import Config
-from events.Event import Event
-from utils import Time
+from notion_gcal_sync.config import Config
+from notion_gcal_sync.events.Event import Event
+from notion_gcal_sync.utils import Time
 
 
 @pytest.fixture()

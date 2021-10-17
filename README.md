@@ -2,6 +2,7 @@
 # Notion-GCal-Sync
 
 
+
 ## Setup 
 
 From pip and running directly 
@@ -20,7 +21,7 @@ Keep following the instructions
 
 ### Credentials for Google Calendar
 
-The following is a summary of [this](https://developers.google.com/workspace/guides/create-credentials) and will get you the credentials for authenticating against your google calendar.
+The following is a summary of [this](https://developers.google.com/workspace/guides/create-credentials) and will get you the credentials for authenticating against your Google calendar.
 
 1. New Project and call it something e.g `notion`. (Note: Make sure to select the newly created project)
 2. Navigate to the [API Library](https://console.cloud.google.com/apis/).
@@ -55,6 +56,11 @@ The `token.json` will store the user's access and refresh tokens as json and is 
     NOTION_GCAL_SYNC_LIB="$(pip list -v | grep notion-gcal-sync | awk '{print $3}')/notion_gcal_sync"
     cp client_secret_*.apps.googleusercontent.com.json "$NOTION_GCAL_SYNC_LIB/client_secret.json"
     ```
+    
+    Windows: Search where your Python library got installed and copy your `client_secret_*.apps.googleusercontent.com.json` as `client_secret.json`. inside
+    ```powershell
+    # TODO
+    ```
 
 ### Credentials for Notion
 
@@ -75,9 +81,9 @@ The following is a summary of [this](https://developers.notion.com/docs/authoriz
 
 1. Duplicate [this page](https://virtuose.notion.site/130c26a74ca44da585506be9e8af678d?v=f76cc35334204f5abf0cd749134dc047) to your notion. 
 
-    Don't be overwhelmed by the amount of properties. You can hide or [rename columns](#Rename columns) you don't want to see, **but do not remove them!**
+    Don't be overwhelmed by the amount of properties. You can hide or [rename columns](#Columns) you don't want to see, **but do not remove them!**
 
-2. Click `Share` on the top right corner of your duplicated page and `Invite` your [Notion Integration](#credentials-for-notion) with `Can edit` .
+2. Click `Share` in the top right corner of your duplicated page and `Invite` your [Notion Integration](#credentials-for-notion) with `Can edit` .
 
 3. Copy the URL of your duplicated page and add it to your `config.yml`. 
    
@@ -126,27 +132,22 @@ The following is a summary of [this](https://developers.notion.com/docs/authoriz
 
 ## Usage
 
-**IMPORTANT:** Make sure you have configured `config.yml` with your [notion token and page](#credentials-for-notion) for Notion API and [gathered and setup credentials](#credentials-for-google-calendar)  `client_secret.json` for Google Calendar API.
+**IMPORTANT:** Make sure you followed the setup and configured `config.yml` with your [notion token and page](#credentials-for-notion) for Notion API and [gathered and setup credentials](#credentials-for-google-calendar)  `client_secret.json` for Google Calendar API.
 
 From pip and running directly 
 ```bash
-# Install from pip
-pip install notion-gcal-sync
-# Run
 notion-gcal-sync
 ```
 
 With docker (Not the mounting of `client_secret.json` and `config.yml`)
 ```yaml
-# Pull from docker hub
-docker pull notion-gcal-sync
-# Run with mounted crendtials and config
 docker run -v client_secret.json:client_secret.json -v config.yml:config.yml notion-gcal-sync
 ```
 
 On first run or when token is old you will be asked to authorize the application. Follow the link and authorize with your account. After authorization the application will continue.
 ```bash
 $ notion-gcal-sync
+...
 Please visit this URL to authorize this application: 
 https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=***
 ```
@@ -155,7 +156,7 @@ https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=***
 ## Notes
 
 BE AWARE OF THE FOLLOWING:
-* This sync will update your source links in gcal. Links to mails etc. will get overwritten with a link to the notion page.
+* This sync will update your source links in gcal. Links to mail etc. will get overwritten with a link to the notion page.
   The original links will be put on top of the description
 * This sync will update all your invites from other calendars not specified to your default calendar. There is a button on gcal to restore 
   back
