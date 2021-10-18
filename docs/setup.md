@@ -25,7 +25,7 @@ This file will be configured in the following setup. To get the location of your
 
 * Linux (or WSL):
     ```bash
-    NOTION_GCAL_SYNC_LIB="$(pip list -v | grep notion-gcal-sync | awk '{print $3}')/notion_gcal_sync"
+    NOTION_GCAL_SYNC_LIB="$(pip list -v [--user] | grep notion-gcal-sync | awk '{print $3}')/notion_gcal_sync"
     ls $NOTION_GCAL_SYNC_LIB
     ```
 

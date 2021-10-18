@@ -1,2 +1,14 @@
-client_credentials.json
-token.json
+.idea/
+.vscode
+
+**/config.yml
+**/client_credentials.json
+**/token.json
+**/*.csv
+*.json
+*.log
+*.csv
+
+install.sh
+docs/
+tests/
