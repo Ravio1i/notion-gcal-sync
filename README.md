@@ -13,7 +13,7 @@ pip install notion-gcal-sync
 
 With docker (Not the mounting of `client_secret.json` and `config.yml`)
 
-```yaml
+```yaml 
 docker pull notion-gcal-sync
 ```
 
@@ -23,14 +23,19 @@ Keep following [these instructions](docs/setup.md).
 
 **IMPORTANT:** Make sure you followed the [setup](docs/setup.md) and configured the `config.yml` with your notion token and page for Notion API and gathered and setup credentials `client_secret.json` for Google Calendar API.
 
-From pip and running directly 
+From pip and running directly
+
 ```bash
 notion-gcal-sync
 ```
 
 With docker (Not the mounting of `client_secret.json` and `config.yml`)
+
 ```yaml
-docker run -v client_secret.json:client_secret.json -v config.yml:config.yml notion-gcal-sync
+docker run --net=host -it \
+    -v $(pwd)/config.yml:/app/notion_gcal_sync/config.yml \
+    -v $(pwd)/client_credentials.json:/app/notion_gcal_sync/client_credentials.json \
+    notion-gcal-sync
 ```
 
 On first run or when token is old you will be asked to authorize the application. Follow the link and authorize with your account. After authorization the application will continue.

@@ -1,7 +1,7 @@
 .idea/
 .vscode
 
-notion_gcal_sync/config.custom.yml
+notion_gcal_sync/config.yml
 client_secret.json
 *.pkl
 *.json

@@ -1,5 +1,10 @@
 include README.md
 include LICENSE
-include notion_gcal_sync/config.yml
+include notion_gcal_sync/config.default.yml
 
-recursive-include tests/ *
+
+exclude notion_gcal_sync/client-credentials.json
+exclude notion_gcal_sync/token.json
+exclude notion_gcal_sync/config.yml
+
+recursive-exclude tests/ *
