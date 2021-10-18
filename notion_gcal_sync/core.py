@@ -64,7 +64,10 @@ def create_notion_events(df: pd.DataFrame, gcal_client: GCalClient, notion_clien
     gcal_only_df.columns = [x.replace('_gcal', '') if any(k in x for k in gcal_only_df.columns) else x for x in gcal_only_df]
     gcal_only_df = gcal_only_df.loc[:, gcal_df.columns]
     logging.info('Found {} event(s) to be created in Notion'.format(len(gcal_only_df)))
+    c = 0
     for idx, el in gcal_only_df.iterrows():
+        c += 1
+        if c == 100: break
         el['time_last_synced'] = gcal_client.cfg.time.now()
         logging.info('- Creating event "{}" in Notion'.format(el['name']))
         notion_event = NotionEvent(**el.drop(gcal_specific_columns).to_dict(), cfg=notion_client.cfg)
@@ -112,12 +115,13 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
         gcal_updates = gcal_values_df.iloc[idx]
         # Nothing is newer but somewhere this is a difference
         if gcal_updates['read_only'] == "True":
+            logging.info("Skipping read only event {} with update".format(gcal_updates["name"]))
             continue
 
         notion_updates = notion_values_df.iloc[idx]
         if not el['time_last_updated']['self'] or not el['time_last_updated']['other']:
             logging.error('The event "{}" is synced, but still there is a difference'.format(notion_updates['name']))
-            logging.error(el.dropna().to_dict())
+            logging.error(el.loc[:, ~el.isin([''])].to_dict())
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
             logging.error("Setting sync status to ERROR")
             notion_client.set_sync_error(notion_event)
@@ -139,7 +143,7 @@ def update_events(df: pd.DataFrame, gcal_client: GCalClient, gcal_df: pd.DataFra
 
             logging.info('- Synchronize event "{}" in Notion'.format(notion_updates['name']))
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
-            notion_event.gcal_page_url = gcal_event_res['htmlLink']
+            notion_event.gcal_page_url = gcal_event_res['htmlLink'] + '&ctz=' + notion_client.cfg.time.timezone_name
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:
                 continue
@@ -190,10 +194,14 @@ def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, not
 
 def validate_paths():
     config_file = os.path.join(current_dir, 'config.yml')
+    config_default_file = os.path.join(current_dir, 'config.default.yml')
     token_file = os.path.join(current_dir, 'token.json')
     credentials_files = os.path.join(current_dir, 'client_credentials.json')
     if not os.path.exists(config_file):
         logging.error("{} does not exist. Make sure the config.yml exists with the right keys".format(config_file))
+        if os.path.exists(config_default_file):
+            logging.error("Only the default {} exists. Make sure to edit it and rename it to config.yml"
+                          .format(config_default_file))
         raise FileNotFoundError
     if not os.path.exists(token_file) and not os.path.exists(credentials_files):
         logging.error("{} or {} does not exist. Follow the README to obtain a client credential from Google API."
@@ -203,11 +211,10 @@ def validate_paths():
 
 def main():
     logging.info('=' * 100)
+    validate_paths()
 
     with open(os.path.join(current_dir, 'config.yml'), 'r') as yaml_file:
         yaml_cfg = yaml.safe_load(yaml_file)
-
-    validate_paths()
 
     cfg = Config(**yaml_cfg['defaults'], **yaml_cfg['gcal'], **yaml_cfg['notion'], time=Time(**yaml_cfg['time']))
 

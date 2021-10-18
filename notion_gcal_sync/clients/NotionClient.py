@@ -23,6 +23,10 @@ class NotionClient:
             for i, obj in enumerate(notion_event_res['results']):
                 notion_event = NotionEvent.from_api(obj, self.cfg)
 
+                if not notion_event.name:
+                    logging.warning('Skipping event with no name specified')
+                    continue
+
                 if not notion_event.time_start and self.cfg.no_date_action == 'skip':
                     logging.warning('Skipping event {} with no date specified'.format(notion_event.name))
                     continue

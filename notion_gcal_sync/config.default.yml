@@ -2,7 +2,6 @@
 # !!! KEEP THE ORDER OF THE CONFIGURATION !!!
 
 defaults:
-  # default event length in minutes when only start is specified
   default_event_length: 60
   no_date_action: 'skip' # ['skip', 'today']
 

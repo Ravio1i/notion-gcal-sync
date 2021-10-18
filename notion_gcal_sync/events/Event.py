@@ -39,9 +39,9 @@ class Event:
 
     def dict_from_class(self):
         return dict(
-                (key.replace('_', '', 1), value) if key.startswith('_') else (key,  value)
-                for (key, value) in self.__dict__.items()
-                if not key.startswith('__') and key != "cfg"
+            (key.replace('_', '', 1), value) if key.startswith('_') else (key, value)
+            for (key, value) in self.__dict__.items()
+            if not key.startswith('__') and key != "cfg"
         )
 
     @property
@@ -72,6 +72,6 @@ class Event:
         if gcal_calendar_name == 'Google Calendar':
             return 'skip', 'skip'
 
-        logging.warning('Different organizer calendar "{}" for event "{}". Using default calendar {}'
-                        .format(gcal_calendar_id, self.name, self.cfg.default_calendar_id))
+        logging.debug('Different organizer calendar "{}" for event "{}". Using default calendar {}'
+                      .format(gcal_calendar_id, self.name, self.cfg.default_calendar_id))
         return self.cfg.default_calendar_id, self.cfg.default_calendar_name

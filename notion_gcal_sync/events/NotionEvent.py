@@ -44,8 +44,9 @@ class NotionEvent(Event):
     def get_name(cls, properties: dict, column: str) -> str:
         try:
             return properties.get(column, {})['title'][0]['text']['content']
-        except KeyError:
+        except (KeyError, IndexError):
             logging.error('Could not specify name for notion event')
+            return ''
 
     @classmethod
     def get_last_edited_time(cls, properties: dict, column, time: Time) -> datetime:
@@ -75,10 +76,10 @@ class NotionEvent(Event):
 
     @classmethod
     def get_select(cls, properties: dict, column: str) -> str:
-        try:
-            return properties.get(column, {})['select']['name']
-        except KeyError:
+        select = properties.get(column, {}).get('select', {})
+        if not select:
             return ''
+        return select.get('name', '')
 
     @classmethod
     def get_multiselect(cls, properties: dict, column: str) -> list:
