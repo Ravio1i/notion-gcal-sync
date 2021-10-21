@@ -23,7 +23,7 @@ def test_get_name():
 def test_get_name_invalid():
     column = "Name"
     properties = {}
-    assert NotionEvent.get_name(properties, column) is None
+    assert NotionEvent.get_name(properties, column) is ''
 
 
 def test_get_last_edited_time():
