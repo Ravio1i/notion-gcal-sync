@@ -5,13 +5,13 @@ Notion-GCal-Sync is a python application to bidirectional synchronize calendar e
 
 ## Setup 
 
-From pip and running directly
+With [pip](https://pypi.org/project/notion-gcal-sync/)
 
 ```bash
 pip install notion-gcal-sync
 ```
 
-With docker (Not the mounting of `client_secret.json` and `config.yml`)
+With docker
 
 ```yaml 
 docker pull notion-gcal-sync
