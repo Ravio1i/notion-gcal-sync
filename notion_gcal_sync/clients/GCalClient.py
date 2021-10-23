@@ -21,7 +21,7 @@ class GCalClient:
         self.cfg = cfg
         self.credentials = self.get_credentials()
         self.service = build("calendar", "v3", credentials=self.credentials, cache_discovery=False)
-        self.calendar = self.service.gcal_calendars().get(calendarId=self.cfg.gcal_default_calendar_id).execute()
+        self.calendar = self.service.calendars().get(calendarId=self.cfg.gcal_default_calendar_id).execute()
 
     @staticmethod
     def get_credentials():
