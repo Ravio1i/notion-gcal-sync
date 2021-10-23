@@ -3,25 +3,13 @@
 
 Notion-GCal-Sync is a python application to bidirectional synchronize calendar events within notion and google calendar.
 
-## Setup 
+## Getting started 
 
-With [pip](https://pypi.org/project/notion-gcal-sync/)
-
-```bash
-pip install notion-gcal-sync
-```
-
-With docker
-
-```yaml 
-docker pull notion-gcal-sync
-```
-
-Keep following [these instructions](docs/setup.md).
+Follow [these instructions](https://github.com/Ravio1i/notion-gcal-sync/blob/main/docs/setup.md).
 
 ## Usage
 
-**IMPORTANT:** Make sure you followed the [setup](docs/setup.md) and configured the `config.yml` with your notion token and page for Notion API and gathered and setup credentials `client_secret.json` for Google Calendar API.
+**IMPORTANT:** Make sure you followed the [setup](https://github.com/Ravio1i/notion-gcal-sync/blob/main/docs/setup.md) and configured the `config.yml` with your notion token and page for Notion API and gathered and setup credentials `client_secret.json` for Google Calendar API.
 
 From pip and running directly
 

@@ -1,54 +1,84 @@
 import logging
+import os
 
-from .utils import Time
+import yaml
+
+from notion_gcal_sync.utils import Time
+
+CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".notion-gcal-sync")
+CONFIG_FILE = os.path.join(CONFIG_PATH, "config.yml")
 
 
 class Config:
-    def __init__(self, default_event_length: int, no_date_action: str, default_calendar_id: str, default_calendar_name: str,
-                 calendars: dict, database_url: str, token: str,  columns: dict,  time: Time):
-        # GENERAL
+    default_notion_columns = {
+        "name": "Name",
+        "date": "Date",
+        "tags": "Tags",
+        "description": "Description",
+        "location": "Location",
+        "last_updated_time": "Last Updated",
+        "last_synced_time": "Last Synced",
+        "gcal_event_id": "GCal event Id",
+        "recurrent_event": "GCal Recurrence",
+        "gcal_event_url": "GCal event url",
+        "gcal_calendar_name": "Calendar",
+        "gcal_calendar_id": "GCal calendar Id",
+        "to_delete": "To Delete",
+        "deleted": "Deleted",
+        "read_only": "Read Only",
+    }
+
+    def __init__(
+        self,
+        default_event_length: int = 60,
+        no_date_action: str = "skip",
+        gcal_calendars=None,
+        gcal_default_calendar_name: str = "Default",
+        notion_database_url: str = None,
+        notion_token: str = None,
+        notion_columns: dict = None,
+        timezone_name: str = 'Europe/Berlin',
+        timezone_diff: str = '+02:00',
+        time: Time = Time("Europe/Berlin", "+02:00"),
+    ):
         self.default_event_length = default_event_length
         self.no_date_action = no_date_action
-
-        # GCAL
-        self.default_calendar_id = default_calendar_id
-        self.default_calendar_name = default_calendar_name
-        self.calendars = calendars
-
-        # NOTION
-        self.database_url = database_url
-        self.token = token
-        self.col_name = columns['name']
-        self.col_date = columns['date']
-        self.col_recurrent_event = columns['recurrent_event']
-        self.col_tags = columns['tags']
-        self.col_description = columns['description']
-        self.col_location = columns['location']
-        self.col_last_updated_time = columns['last_updated_time']
-        self.col_last_synced_time = columns['last_synced_time']
-        self.col_gcal_event_id = columns['gcal_event_id']
-        self.col_gcal_event_url = columns['gcal_event_url']
-        self.col_gcal_calendar_name = columns['gcal_calendar_name']
-        self.col_gcal_calendar_id = columns['gcal_calendar_id']
-        self.col_to_delete = columns['to_delete']
-        self.col_deleted = columns['deleted']
-        self.col_read_only = columns['read_only']
-
-        # TIME
+        self.timezone_name = timezone_name
+        self.timezone_diff = timezone_diff
         self.time = time
+        # GCAL
+        self.gcal_calendars = gcal_calendars if gcal_calendars else {}
+        self.gcal_default_calendar_name = gcal_default_calendar_name
+        self.gcal_default_calendar_id = self.get_calendar_id(self.gcal_default_calendar_name)
+        # NOTION
+        self.notion_database_url = notion_database_url
+        self.notion_token = notion_token
+
+        self.notion_columns = notion_columns if notion_columns else self.default_notion_columns
+        if not len([key for key in self.default_notion_columns.keys() if key in self.notion_columns.keys()]) == len(
+            self.default_notion_columns.keys()
+        ):
+            raise ValueError
 
     @property
-    def database_url(self):
-        return self._database_url
+    def notion_database_url(self):
+        return self._notion_database_url
 
-    @database_url.setter
-    def database_url(self, value):
-        self._database_url = value
-        if "?v=" in value and value.startswith("https://www.notion.so/") and value.endswith("&p="):
-            self.database_id = self.database_url[:self.database_url.index('?v=')].split('/')[-1]
+    @notion_database_url.setter
+    def notion_database_url(self, value):
+        if not value or not value.startswith("https://www.notion.so/") or "?v=" not in value or value.endswith("?v="):
+            logging.error("Invalid database url: "
+                          "Should start with 'https://www.notion.so/'. "
+                          "Should contain '?v='. "
+                          "Should not end with '?v='. ")
+            self._notion_database_url = None
+            self.notion_database_id = None
             return
-        logging.error("Invalid database url. Cannot get database id")
-        self.database_id = None
+
+        if not value.endswith("&p="):
+            value += "&p="
+        self._notion_database_url = value
+        self.notion_database_id = value[: value.index("?v=")].split("/")[-1]
 
     @property
     def default_event_length(self):
@@ -67,24 +97,47 @@ class Config:
 
     @no_date_action.setter
     def no_date_action(self, value):
-        if value not in ['skip', 'today']:
+        if value not in ["skip", "today"]:
             logging.error("Invalid no_date_action {}. Defaulting to skip".format(value))
-            value = 'skip'
+            value = "skip"
         self._no_date_action = value
 
+    @property
+    def gcal_default_calendar_id(self):
+        return self._gcal_default_calendar_id
+
+    @gcal_default_calendar_id.setter
+    def gcal_default_calendar_id(self, value):
+        self._gcal_default_calendar_id = value
+
     def get_calendar_id(self, calendar_name: str) -> str:
-        return self.calendars.get(calendar_name)
+        return self.gcal_calendars.get(calendar_name)
 
     def get_calendar_name(self, calendar_id: str) -> str or None:
         try:
-            return list(self.calendars.keys())[list(self.calendars.values()).index(calendar_id)]
+            return list(self.gcal_calendars.keys())[list(self.gcal_calendars.values()).index(calendar_id)]
         except ValueError:
             return None
 
     def is_valid_calendar_name(self, calendar_name: str) -> bool:
-        calendar_name = self.calendars.get(calendar_name)
+        calendar_name = self.gcal_calendars.get(calendar_name)
         return True if calendar_name else False
 
     def is_valid_calendar_id(self, calendar_id: str) -> bool:
         calendar_id = self.get_calendar_name(calendar_id)
         return True if calendar_id else False
+
+    def to_dict(self):
+        config_dict = dict(
+            (key.replace("_", "", 1), value) if key.startswith("_") else (key, value)
+            for (key, value) in self.__dict__.items()
+            if not key.startswith("__") and key != "cfg"
+        )
+        del config_dict["time"]
+        del config_dict["notion_database_id"]
+        del config_dict["gcal_default_calendar_id"]
+        return config_dict
+
+    def to_yaml(self):
+        with open(CONFIG_FILE, 'w') as file:
+            yaml.dump(self.to_dict(), file)

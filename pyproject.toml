@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "notion-gcal-sync"
+version = "1.0.0"
+description = "Bidirectional synchronize calendar events within notion and google calendar"
+readme = "README.md"
+repository = "https://github.com/Ravio1i/notion-gcal-sync"
+
+authors = ["Luka Kroeger <luka.kroeger@gmail.com>"]
+license = 'GNU General Public License v3.0'
+
+exclude = ["*.json", "*.csv", "**/config.yml"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4"
+notion-client= "0.7.0"
+google-api-python-client = "2.23.0"
+google-auth-oauthlib = "0.4.6"
+pyyaml = "5.4.1"
+pandas = "1.3.3"
+click = "^8.0.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "6.2.4"
+pytest-cov = "3.0.0"
+flake8 = "4.0.1"
+poetry = "^1.1.11"
+poetry2setup = "^1.0.0"
+
+[tool.poetry.scripts]
+notion-gcal-sync = "notion_gcal_sync.__main__:main"
+
+[tool.semantic_release]
+version_variable = [
+    "notion_gcal_sync/__init__.py:__version__",
+    "pyproject.toml:version"]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"

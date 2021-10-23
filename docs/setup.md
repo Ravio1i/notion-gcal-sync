@@ -4,15 +4,18 @@ This document describes how to set up and configure your notion-gcal-sync.
 
 ## Installation
 
+With [pip](https://pypi.org/project/notion-gcal-sync/)
+
 ```bash
 pip install notion-gcal-sync
 ```
 
-With docker (Not the mounting of `client_secret.json` and `config.yml`)
+With [docker](https://github.com/Ravio1i/notion-gcal-sync/pkgs/container/notion-gcal-sync)
 
-```yaml
-docker pull notion-gcal-sync
+```yaml 
+docker pull ghrc.io/ravio1i/notion-gcal-sync
 ```
+
 
 ## Configuration
 
