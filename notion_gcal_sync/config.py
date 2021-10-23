@@ -37,8 +37,8 @@ class Config:
         notion_database_url: str = None,
         notion_token: str = None,
         notion_columns: dict = None,
-        timezone_name: str = 'Europe/Berlin',
-        timezone_diff: str = '+02:00',
+        timezone_name: str = "Europe/Berlin",
+        timezone_diff: str = "+02:00",
         time: Time = Time("Europe/Berlin", "+02:00"),
     ):
         self.default_event_length = default_event_length
@@ -67,10 +67,12 @@ class Config:
     @notion_database_url.setter
     def notion_database_url(self, value):
         if not value or not value.startswith("https://www.notion.so/") or "?v=" not in value or value.endswith("?v="):
-            logging.error("Invalid database url: "
-                          "Should start with 'https://www.notion.so/'. "
-                          "Should contain '?v='. "
-                          "Should not end with '?v='. ")
+            logging.error(
+                "Invalid database url: "
+                "Should start with 'https://www.notion.so/'. "
+                "Should contain '?v='. "
+                "Should not end with '?v='. "
+            )
             self._notion_database_url = None
             self.notion_database_id = None
             return
@@ -139,5 +141,5 @@ class Config:
         return config_dict
 
     def to_yaml(self):
-        with open(CONFIG_FILE, 'w') as file:
+        with open(CONFIG_FILE, "w") as file:
             yaml.dump(self.to_dict(), file)

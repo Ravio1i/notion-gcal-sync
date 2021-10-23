@@ -68,9 +68,7 @@ class NotionClient:
 
     def delete_event(self, notion_event: NotionEvent) -> dict:
         """Currently only puts match to True as notion api does not support delete"""
-        return self.client.pages.update(
-            notion_event.notion_id, **{"properties": {self.cfg.notion_columns["deleted"]: {"checkbox": True}}}
-        )
+        return self.client.pages.update(notion_event.notion_id, **{"properties": {self.cfg.notion_columns["deleted"]: {"checkbox": True}}})
 
     def set_sync_error(self, notion_event: NotionEvent) -> dict:
         return self.client.pages.update(

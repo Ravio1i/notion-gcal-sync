@@ -65,9 +65,7 @@ class GCalClient:
         while True:
             gcal_events_res = (
                 self.service.events()
-                .list(
-                    calendarId=calendar_id, pageToken=page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,
-                )
+                .list(calendarId=calendar_id, pageToken=page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,)
                 .execute()
             )
             gcal_event_count += len(gcal_events_res["items"])
@@ -77,9 +75,7 @@ class GCalClient:
                     logging.debug('Event "{}" is  cancelled. Skipping...'.format(event.get("id", "")))
                     continue
                 if not event.get("summary"):
-                    logging.error(
-                        'Event "{}" at "{}" does not have a name. Skipping...'.format(event.get("id", ""), event["start"])
-                    )
+                    logging.error('Event "{}" at "{}" does not have a name. Skipping...'.format(event.get("id", ""), event["start"]))
                     continue
                 if event.get("recurrence"):
                     logging.debug("Event {} is recurrent source .Skipping...".format(event["summary"]))
