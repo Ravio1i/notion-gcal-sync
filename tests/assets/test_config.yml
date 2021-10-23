@@ -1,0 +1,31 @@
+---
+
+default_event_length: 60
+no_date_action: 'skip' # ['skip', 'today']
+
+timezone_name: 'Europe/Berlin'
+timezone_diff: '+02:00'
+
+gcal_calendars:
+  Default: '***@gmail.com'
+  Work: '***@group.calendar.google.com'
+gcal_default_calendar_name: "Default"
+
+notion_database_url: 'https://www.notion.so/*/***?v=***&p='
+notion_token: '***'
+notion_columns:
+  name: 'Name'
+  date: 'Date'
+  tags: 'Tags'
+  description: 'Description'
+  location: 'Location'
+  last_updated_time: 'Last Updated'
+  last_synced_time: 'Last Synced'
+  gcal_event_id: 'GCal event Id'
+  recurrent_event: 'GCal Recurrence'
+  gcal_event_url: 'GCal event url'
+  gcal_calendar_name: 'Calendar'
+  gcal_calendar_id: 'GCal calendar Id'
+  to_delete: 'Delete?'
+  deleted: 'Deleted'
+  read_only: 'Read Only'
