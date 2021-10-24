@@ -22,7 +22,10 @@ def test_is_date(test_input, expected):
 
 @pytest.mark.parametrize(
     "test_input, expected",
-    [(datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))), "2017-10-25T13:37:10+02:00",), (None, None),],
+    [
+        (datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))), "2017-10-25T13:37:10+02:00",),
+        (None, None),
+    ],
 )
 def test_datetime_to_str(test_input, expected):
     assert Time.datetime_to_str(test_input) == expected

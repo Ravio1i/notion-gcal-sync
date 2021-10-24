@@ -9,13 +9,19 @@ from notion_gcal_sync.events.NotionEvent import NotionEvent
 
 
 def create_gcal_events(
-    df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, notion_df: pd.DataFrame, notion_specific_columns: list,
+    df: pd.DataFrame,
+    gcal_client: GCalClient,
+    notion_client: NotionClient,
+    notion_df: pd.DataFrame,
+    notion_specific_columns: list,
 ):
     logging.info("== CREATING EVENTS IN GCAL " + "=" * 73)
     # left only indicates that the events are only present in Notion
     notion_only_df = df.loc[df["_merge"] == "left_only"]
     # use notion_columns as columns for events to be created
-    notion_only_df.columns = [x.replace("_notion", "") if any(k in x for k in notion_only_df.columns) else x for x in notion_only_df]
+    notion_only_df.columns = [
+        x.replace("_notion", "") if any(k in x for k in notion_only_df.columns) else x for x in notion_only_df
+    ]
     # drop all other columns
     notion_only_df = notion_only_df.loc[:, notion_df.columns]
 
@@ -78,11 +84,15 @@ def update_events(
     gcal_values_df = notion_values_df.copy()
 
     # Take these values if notion is newer
-    notion_values_df.columns = [x.replace("_notion", "") if any(k in x for k in notion_values_df.columns) else x for x in notion_values_df]
+    notion_values_df.columns = [
+        x.replace("_notion", "") if any(k in x for k in notion_values_df.columns) else x for x in notion_values_df
+    ]
     notion_values_df = notion_values_df[notion_df.columns]
 
     # Take these values if gcal is newer
-    gcal_values_df.columns = [x.replace("_gcal", "") if any(k in x for k in gcal_values_df.columns) else x for x in gcal_values_df]
+    gcal_values_df.columns = [
+        x.replace("_gcal", "") if any(k in x for k in gcal_values_df.columns) else x for x in gcal_values_df
+    ]
     gcal_values_df = gcal_values_df[gcal_df.columns]
 
     # Comparing the notion values to the gcal values
@@ -140,7 +150,9 @@ def update_events(
             logging.info('Event "{}" has an update in GCal'.format(gcal_updates["name"]))
             logging.info('- Updating event "{}" in Notion'.format(gcal_updates["name"]))
             notion_event = NotionEvent(
-                **gcal_updates.drop(gcal_specific_columns).to_dict(), notion_id=notion_updates["notion_id"], cfg=notion_client.cfg
+                **gcal_updates.drop(gcal_specific_columns).to_dict(),
+                notion_id=notion_updates["notion_id"],
+                cfg=notion_client.cfg
             )
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:
@@ -200,7 +212,9 @@ def sync(cfg):
     ###########################################################################
     df = None
     if not notion_df.empty and not gcal_df.empty:
-        df = notion_df.merge(gcal_df, on="gcal_event_id", how="outer", indicator=True, suffixes=("_notion", "_gcal"),).drop_duplicates()
+        df = notion_df.merge(
+            gcal_df, on="gcal_event_id", how="outer", indicator=True, suffixes=("_notion", "_gcal"),
+        ).drop_duplicates()
     # TODO: MAKE THIS BOOTSTRAP AUTOMATIC ITS UGLY
     elif gcal_df.empty and not notion_df.empty:
         df = notion_df.copy()

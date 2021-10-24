@@ -61,22 +61,27 @@ class GCalClient:
         max_results = 2500
         gcal_event_items = []
         gcal_event_count = 0
+
         logging.info("Fetching events from calendar: {}".format(self.cfg.get_calendar_name(calendar_id)))
         while True:
             gcal_events_res = (
                 self.service.events()
-                .list(calendarId=calendar_id, pageToken=page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,)
+                .list(calendar_id, page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results)
                 .execute()
             )
             gcal_event_count += len(gcal_events_res["items"])
             print("Found {} events".format(gcal_event_count), end="\r")
+
             for event in gcal_events_res["items"]:
+
                 if event["status"] == "cancelled":
                     logging.debug('Event "{}" is  cancelled. Skipping...'.format(event.get("id", "")))
                     continue
+
                 if not event.get("summary"):
-                    logging.error('Event "{}" at "{}" does not have a name. Skipping...'.format(event.get("id", ""), event["start"]))
+                    logging.error('Event "{}" at "{}" has no name. Skipping...'.format(event.get("id", ""), event["start"]))
                     continue
+
                 if event.get("recurrence"):
                     logging.debug("Event {} is recurrent source .Skipping...".format(event["summary"]))
                     continue
@@ -90,7 +95,9 @@ class GCalClient:
                     logging.debug('Using gcal event link for "{}" as recurrence reference'.format(gcal_event.name))
                     gcal_res = self.get_event(gcal_event.gcal_calendar_id, gcal_event.gcal_event_id)
                     gcal_event.recurrent_event = gcal_res["htmlLink"]
+
                 gcal_event_items.append(gcal_event.to_dict())
+
             page_token = gcal_events_res.get("nextPageToken")
             if not page_token:
                 break
