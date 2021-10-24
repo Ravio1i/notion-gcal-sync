@@ -62,6 +62,21 @@ class Event:
         )
 
     @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        if not value:
+            self._description = ""
+            return
+        if len(value) >= 2000:
+            logging.warning("Description of Event '{}' too long for Notion (>= 1000)")
+            self._description = value[:2000]
+            return
+        self._description = value
+
+    @property
     def read_only(self):
         return self._read_only
 
