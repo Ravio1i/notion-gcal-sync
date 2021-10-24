@@ -1,21 +1,30 @@
-from fixtures import *
+from datetime import datetime
+
+import pytest
+
+from events.Event import Event
 
 
 @pytest.mark.parametrize(
-    "test_input, expected", [("False", False), (None, False), (True, True), ("True", True)],
+    "test_input, expected",
+    [("False", False), (None, False), (True, True), ("True", True)],
 )
-def test_read_only(event, test_input, expected):
-    event.read_only = test_input
-    assert event.read_only == expected
+def test_read_only(event_fixture, test_input, expected):
+    event_fixture.read_only = test_input
+    assert event_fixture.read_only == expected
 
 
-def test_default_event_length(config):
-    event = Event(time_start=datetime(2021, 12, 10, 10, 30), time_end=datetime(2021, 12, 10, 10, 30), cfg=config,)
+def test_default_event_length(config_fixture):
+    event = Event(
+        time_start=datetime(2021, 12, 10, 10, 30),
+        time_end=datetime(2021, 12, 10, 10, 30),
+        cfg=config_fixture,
+    )
     assert event.time_end == datetime(2021, 12, 10, 11, 30)
 
 
-def test_dict_from_class(event):
-    assert event.to_dict() == dict(
+def test_dict_from_class(event_fixture):
+    assert event_fixture.to_dict() == dict(
         name="name",
         description="description",
         location="Vatikan",
@@ -43,11 +52,11 @@ def test_dict_from_class(event):
         ("something@gmail.com", "Google Calendar", ("skip", "skip")),
     ],
 )
-def test_set_calendar(event, test_calendar_id, test_calendar_name, expected):
-    assert event.set_calendar(test_calendar_id, test_calendar_name) == expected
+def test_set_calendar(event_fixture, test_calendar_id, test_calendar_name, expected):
+    assert event_fixture.set_calendar(test_calendar_id, test_calendar_name) == expected
 
 
-def test_different_calendar(config):
-    event = Event(gcal_calendar_id="dude@gmail.com", gcal_calendar_name="Calendar2", cfg=config)
+def test_different_calendar(config_fixture):
+    event = Event(gcal_calendar_id="dude@gmail.com", gcal_calendar_name="Calendar2", cfg=config_fixture)
     assert event.gcal_calendar_name == "Calendar2"
     assert event.gcal_calendar_id == "abc123@group.calendar.google.com"

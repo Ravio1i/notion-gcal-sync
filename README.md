@@ -1,4 +1,7 @@
 [![Unit Tests](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml/badge.svg)](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/test.yml)
+[![Create and publish a Docker image](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/release.yml/badge.svg?branch=main&event=deployment)](https://github.com/Ravio1i/notion-gcal-sync/actions/workflows/release.yml)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
 # Notion-GCal-Sync
 
 Notion-GCal-Sync is a python application to bidirectional synchronize calendar events within notion and google calendar.

@@ -7,8 +7,8 @@ from notion_gcal_sync.events.Event import Event
 from notion_gcal_sync.utils import Time
 
 
-@pytest.fixture()
-def notion_columns():
+@pytest.fixture(scope="module")
+def notion_columns_fixture():
     return {
         "name": "Name",
         "date": "Date",
@@ -28,14 +28,17 @@ def notion_columns():
     }
 
 
-@pytest.fixture()
-def config_dict(notion_columns):
+@pytest.fixture(scope="module")
+def config_dict_fixture(notion_columns_fixture):
     return {
         "default_event_length": 60,
         "no_date_action": "skip",
-        "gcal_calendars": {"Default": "dude@gmail.com", "Calendar2": "abc123@group.calendar.google.com",},
+        "gcal_calendars": {
+            "Default": "dude@gmail.com",
+            "Calendar2": "abc123@group.calendar.google.com",
+        },
         "gcal_default_calendar_name": "Default",
-        "notion_columns": notion_columns,
+        "notion_columns": notion_columns_fixture,
         "notion_database_url": "https://www.notion.so/*/***?v=***&p=",
         "notion_token": "SECRET",
         "timezone_diff": "+02:00",
@@ -43,13 +46,13 @@ def config_dict(notion_columns):
     }
 
 
-@pytest.fixture()
-def time():
+@pytest.fixture(scope="module")
+def time_fixture():
     return Time("Europe/Berlin", "+02:00")
 
 
-@pytest.fixture()
-def config(notion_columns, time):
+@pytest.fixture(scope="module")
+def config_fixture(notion_columns_fixture, time_fixture):
     return Config(
         default_event_length=60,
         no_date_action="skip",
@@ -57,13 +60,13 @@ def config(notion_columns, time):
         gcal_default_calendar_name="Default",
         notion_database_url="https://www.notion.so/*/***?v=***&p=",
         notion_token="SECRET",
-        notion_columns=notion_columns,
-        time=time,
+        notion_columns=notion_columns_fixture,
+        time=time_fixture,
     )
 
 
-@pytest.fixture()
-def event(config):
+@pytest.fixture(scope="module")
+def event_fixture(config_fixture):
     return Event(
         name="name",
         description="description",
@@ -79,5 +82,5 @@ def event(config):
         notion_page_url="https://www.notion.so",
         gcal_page_url="calendar.google.com",
         read_only=False,
-        cfg=config,
+        cfg=config_fixture,
     )
