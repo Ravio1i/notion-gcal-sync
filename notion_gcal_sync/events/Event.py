@@ -93,9 +93,7 @@ class Event:
 
         logging.debug(
             'Different organizer calendar "{}" for event "{}". Using default calendar {}'.format(
-                gcal_calendar_id,
-                self.name,
-                self.cfg.get_calendar_id(self.cfg.gcal_default_calendar_name),
+                gcal_calendar_id, self.name, self.cfg.get_calendar_id(self.cfg.gcal_default_calendar_name),
             )
         )
         return self.cfg.gcal_default_calendar_id, self.cfg.gcal_default_calendar_name

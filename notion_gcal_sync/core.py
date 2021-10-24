@@ -46,11 +46,7 @@ def create_gcal_events(
 
 
 def create_notion_events(
-    df: pd.DataFrame,
-    gcal_client: GCalClient,
-    notion_client: NotionClient,
-    gcal_df: pd.DataFrame,
-    gcal_specific_columns: list,
+    df: pd.DataFrame, gcal_client: GCalClient, notion_client: NotionClient, gcal_df: pd.DataFrame, gcal_specific_columns: list,
 ):
     logging.info("== CREATING EVENTS IN NOTION " + "=" * 71)
     # right only indicates that the events are only present in Notion
@@ -101,9 +97,7 @@ def update_events(
 
     # Comparing the notion values to the gcal values
     diff_df = notion_values_df.drop(notion_specific_columns, axis=1).compare(
-        gcal_values_df.drop(gcal_specific_columns, axis=1),
-        keep_shape=True,
-        keep_equal=False,
+        gcal_values_df.drop(gcal_specific_columns, axis=1), keep_shape=True, keep_equal=False,
     )
     diff_df = diff_df.dropna(axis=0, how="all").astype(object).where(pd.notnull(diff_df), "")
     diff_df.to_csv("diff.csv")
@@ -210,10 +204,7 @@ def sync(cfg):
     ###########################################################################
     logging.info("Fetching events from Google Calendar")
     gcal_client = GCalClient(cfg)
-    gcal_events = sum(
-        [gcal_client.list_events(cfg.gcal_calendars[calendar]) for calendar in cfg.gcal_calendars],
-        [],
-    )
+    gcal_events = sum([gcal_client.list_events(cfg.gcal_calendars[calendar]) for calendar in cfg.gcal_calendars], [],)
     gcal_df = pd.DataFrame(gcal_events).astype(str)
 
     ###########################################################################
@@ -222,11 +213,7 @@ def sync(cfg):
     df = None
     if not notion_df.empty and not gcal_df.empty:
         df = notion_df.merge(
-            gcal_df,
-            on="gcal_event_id",
-            how="outer",
-            indicator=True,
-            suffixes=("_notion", "_gcal"),
+            gcal_df, on="gcal_event_id", how="outer", indicator=True, suffixes=("_notion", "_gcal"),
         ).drop_duplicates()
     # TODO: MAKE THIS BOOTSTRAP AUTOMATIC ITS UGLY
     elif gcal_df.empty and not notion_df.empty:
@@ -257,13 +244,7 @@ def sync(cfg):
     create_notion_events(df, gcal_client, notion_client, gcal_df, gcal_specific_columns)
     # GCAL or Notion events requiring update
     update_events(
-        df,
-        gcal_client,
-        gcal_df,
-        gcal_specific_columns,
-        notion_client,
-        notion_df,
-        notion_specific_columns,
+        df, gcal_client, gcal_df, gcal_specific_columns, notion_client, notion_df, notion_specific_columns,
     )
     # GCAL events to be deleted
     delete_gcal_events(notion_client, gcal_client, notion_specific_columns)
