@@ -152,7 +152,7 @@ def update_events(
             notion_event = NotionEvent(
                 **gcal_updates.drop(gcal_specific_columns).to_dict(),
                 notion_id=notion_updates["notion_id"],
-                cfg=notion_client.cfg
+                cfg=notion_client.cfg,
             )
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:

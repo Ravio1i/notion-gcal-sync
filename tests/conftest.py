@@ -33,10 +33,7 @@ def config_dict_fixture(notion_columns_fixture):
     return {
         "default_event_length": 60,
         "no_date_action": "skip",
-        "gcal_calendars": {
-            "Default": "dude@gmail.com",
-            "Calendar2": "abc123@group.calendar.google.com",
-        },
+        "gcal_calendars": {"Default": "dude@gmail.com", "Calendar2": "abc123@group.calendar.google.com"},
         "gcal_default_calendar_name": "Default",
         "notion_columns": notion_columns_fixture,
         "notion_database_url": "https://www.notion.so/*/***?v=***&p=",

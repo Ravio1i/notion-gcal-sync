@@ -161,7 +161,7 @@ class NotionEvent(Event):
                 self.cfg.notion_columns["gcal_calendar_name"]: {"select": {"name": self.gcal_calendar_name}},
                 self.cfg.notion_columns["location"]: {"rich_text": [{"text": {"content": self.location}}]},
                 self.cfg.notion_columns["gcal_event_id"]: {"rich_text": [{"text": {"content": self.gcal_event_id}}]},
-                self.cfg.notion_columns["last_synced_time"]: {"rich_text": [{"text": {"content": self.cfg.time.now(),}}]},
+                self.cfg.notion_columns["last_synced_time"]: {"rich_text": [{"text": {"content": self.cfg.time.now()}}]},
                 self.cfg.notion_columns["gcal_event_url"]: {"url": self.gcal_page_url},
                 self.cfg.notion_columns["read_only"]: {"checkbox": bool(self.read_only)},
             },

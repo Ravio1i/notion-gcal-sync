@@ -17,7 +17,7 @@ import pytest
 )
 def test_database_id(time_fixture, notion_columns_fixture, test_url, expected):
     config = Config(
-        60, "skip", {"Default": "dude@gmail.com"}, "Default", test_url, "SECRET", notion_columns_fixture, time_fixture
+        60, "skip", {"Default": "dude@gmail.com"}, "Default", test_url, "SECRET", notion_columns_fixture, time_fixture,
     )
     assert config.notion_database_id == expected
 
@@ -28,8 +28,7 @@ def test_default_event_length(config_fixture):
 
 
 @pytest.mark.parametrize(
-    "test_action, expected",
-    [("skip", "skip"), ("today", "today"), ("something_else", "skip")],
+    "test_action, expected", [("skip", "skip"), ("today", "today"), ("something_else", "skip")],
 )
 def test_no_date_action(config_fixture, test_action, expected):
     config_fixture.no_date_action = test_action
@@ -83,12 +82,7 @@ def test_is_valid_calendar_id(config_fixture, test_calendar_id, expected):
 
 @pytest.mark.parametrize(
     "test_calendar_name, expected",
-    [
-        ("Default", True),
-        ("Calendar2", True),
-        ("error@group.calendar.google.com", False),
-        (None, False),
-    ],
+    [("Default", True), ("Calendar2", True), ("error@group.calendar.google.com", False), (None, False)],
 )
 def test_is_valid_calendar_name(config_fixture, test_calendar_name, expected):
     assert config_fixture.is_valid_calendar_name(test_calendar_name) == expected

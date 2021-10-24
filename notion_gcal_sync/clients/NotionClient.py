@@ -48,7 +48,7 @@ class NotionClient:
             "database_id": self.cfg.notion_database_id,
             "filter": {
                 "and": [
-                    {"property": self.cfg.notion_columns["to_delete"], "checkbox": {"equals": delete},},
+                    {"property": self.cfg.notion_columns["to_delete"], "checkbox": {"equals": delete}},
                     {"property": self.cfg.notion_columns["deleted"], "checkbox": {"equals": False}},
                 ]
             },
@@ -75,7 +75,7 @@ class NotionClient:
     def set_sync_error(self, notion_event: NotionEvent) -> dict:
         return self.client.pages.update(
             notion_event.notion_id,
-            **{"properties": {self.cfg.notion_columns["last_synced_time"]: {"rich_text": [{"text": {"content": "ERROR"}}]}}}
+            **{"properties": {self.cfg.notion_columns["last_synced_time"]: {"rich_text": [{"text": {"content": "ERROR"}}]}}},
         )
 
     def update_gcal_link(self, notion_event: NotionEvent, gcal_gcal_page_url: str):

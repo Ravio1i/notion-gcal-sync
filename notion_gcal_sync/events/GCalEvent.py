@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Union, Optional, Any, TypedDict
 
 from notion_gcal_sync.config import Config
 from notion_gcal_sync.events.Event import Event
@@ -116,12 +115,13 @@ class GCalEvent(Event):
         """Get event id of original event if this event is occurrence of recurrence"""
         return obj.get("recurringEventId", "")
 
+    @property
     def body(self):
-        body: dict[str, Union[str, None, dict[str, Optional[str]], dict[str, Union[dict[str, Any], Any]], TypedDict,],] = {
+        body = {
             "summary": self.name,
             "description": self.description,
             "location": self.location,
-            "source": {"title": "Notion at " + self.time_last_synced, "url": self.notion_page_url,},
+            "source": {"title": "Notion at " + self.time_last_synced, "url": self.notion_page_url},
         }
 
         time_end = self.time_end

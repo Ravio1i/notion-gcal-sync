@@ -33,12 +33,14 @@ notion-gcal-sync = "notion_gcal_sync.__main__:main"
 [tool.black]
 line-length = 128
 include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | build
-  | dist
-)/
+    exclude = '''
+    /(
+        \.git
+      | build
+      | dist
+      | blib2to3
+      | tests/assets
+    )/
 '''
 
 [tool.semantic_release]
