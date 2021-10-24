@@ -65,7 +65,9 @@ class GCalClient:
         while True:
             gcal_events_res = (
                 self.service.events()
-                .list(calendar_id, page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,)
+                .list(
+                    calendarId=calendar_id, pageToken=page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,
+                )
                 .execute()
             )
             gcal_event_count += len(gcal_events_res["items"])
