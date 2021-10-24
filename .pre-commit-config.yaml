@@ -7,7 +7,7 @@ repos:
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
       - id: no-commit-to-branch
-        args : [--branch, main, --branch, release]
+        args : [--branch, main]
       - id: mixed-line-ending
       - id: check-toml
       - id: check-merge-conflict
