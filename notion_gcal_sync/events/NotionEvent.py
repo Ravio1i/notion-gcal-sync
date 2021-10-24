@@ -1,20 +1,48 @@
 import logging
 from datetime import datetime
 
-from ..config import Config
-from ..events.Event import Event
-from ..utils import Time
+from notion_gcal_sync.config import Config
+from notion_gcal_sync.events.Event import Event
+from notion_gcal_sync.utils import Time
 
 
 class NotionEvent(Event):
-    def __init__(self, name: str = None, description: str = None, location: str = None, gcal_event_id: str = None,
-                 gcal_calendar_name: str = None, gcal_calendar_id: str = None, time_start: datetime = None,
-                 time_end: datetime = None, recurrent_event: str = None, time_last_updated: datetime = None,
-                 time_last_synced: str = None, notion_page_url: str = None,  gcal_page_url: str = None, notion_id: str = None,
-                 read_only: bool = None, cfg: Config = None):
-        super().__init__(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start,
-                         time_end, recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url,
-                         read_only, cfg)
+    def __init__(
+            self,
+            name: str = None,
+            description: str = None,
+            location: str = None,
+            gcal_event_id: str = None,
+            gcal_calendar_name: str = None,
+            gcal_calendar_id: str = None,
+            time_start: datetime = None,
+            time_end: datetime = None,
+            recurrent_event: str = None,
+            time_last_updated: datetime = None,
+            time_last_synced: str = None,
+            notion_page_url: str = None,
+            gcal_page_url: str = None,
+            notion_id: str = None,
+            read_only: bool = None,
+            cfg: Config = None,
+    ):
+        super().__init__(
+            name,
+            description,
+            location,
+            gcal_event_id,
+            gcal_calendar_name,
+            gcal_calendar_id,
+            time_start,
+            time_end,
+            recurrent_event,
+            time_last_updated,
+            time_last_synced,
+            notion_page_url,
+            gcal_page_url,
+            read_only,
+            cfg,
+        )
         self.notion_id = notion_id
         # self.tags = tags
 
@@ -23,22 +51,37 @@ class NotionEvent(Event):
         props = obj['properties']
         notion_id = obj['id']
         notion_page_url = obj['url']
-        name = cls.get_name(props, cfg.col_name)
-        location = cls.get_text(props, cfg.col_location)
-        time_start, time_end = cls.get_time(props, cfg.col_date)
-        recurrent_event = cls.get_text(props, cfg.col_recurrent_event)
-        time_last_updated = cls.get_last_edited_time(props, cfg.col_last_updated_time, cfg.time)
-        time_last_synced = cls.get_text(props, cfg.col_last_synced_time)
-        description = cls.get_text(props, cfg.col_description)
-        gcal_event_id = cls.get_text(props, cfg.col_gcal_event_id)
-        gcal_page_url = cls.get_url(props, cfg.col_gcal_event_url)
-        gcal_calendar_name = cls.get_select(props, cfg.col_gcal_calendar_name)
-        gcal_calendar_id = cls.get_select(props, cfg.col_gcal_calendar_id)
-        read_only = cls.get_checkbox(props, cfg.col_read_only)
+        name = cls.get_name(props, cfg.notion_columns['name'])
+        location = cls.get_text(props, cfg.notion_columns['location'])
+        time_start, time_end = cls.get_time(props, cfg.notion_columns['date'])
+        recurrent_event = cls.get_text(props, cfg.notion_columns['recurrent_event'])
+        time_last_updated = cls.get_last_edited_time(props, cfg.notion_columns['last_updated_time'], cfg.time)
+        time_last_synced = cls.get_text(props, cfg.notion_columns['last_synced_time'])
+        description = cls.get_text(props, cfg.notion_columns['description'])
+        gcal_event_id = cls.get_text(props, cfg.notion_columns['gcal_event_id'])
+        gcal_page_url = cls.get_url(props, cfg.notion_columns['gcal_event_url'])
+        gcal_calendar_name = cls.get_select(props, cfg.notion_columns['gcal_calendar_name'])
+        gcal_calendar_id = cls.get_select(props, cfg.notion_columns['gcal_calendar_id'])
+        read_only = cls.get_checkbox(props, cfg.notion_columns['read_only'])
         # tags = cls.get_multiselect(props, cfg.col_tags)
-        return cls(name, description, location, gcal_event_id, gcal_calendar_name, gcal_calendar_id, time_start, time_end,
-                   recurrent_event, time_last_updated, time_last_synced, notion_page_url, gcal_page_url, notion_id, read_only,
-                   cfg)
+        return cls(
+            name,
+            description,
+            location,
+            gcal_event_id,
+            gcal_calendar_name,
+            gcal_calendar_id,
+            time_start,
+            time_end,
+            recurrent_event,
+            time_last_updated,
+            time_last_synced,
+            notion_page_url,
+            gcal_page_url,
+            notion_id,
+            read_only,
+            cfg,
+        )
 
     @classmethod
     def get_name(cls, properties: dict, column: str) -> str:
@@ -109,71 +152,18 @@ class NotionEvent(Event):
             time_end = None
 
         body = {
-            "properties": {
-                self.cfg.col_name: {
-                    "title": [{
-                        "text": {
-                            "content": self.name
-                        }
-                    }]
-                },
-                self.cfg.col_date: {
-                    "date": {
-                        "start": time_start,
-                        "end": time_end
-                    }
-                },
-                self.cfg.col_recurrent_event: {
-                    "rich_text": [{
-                        "text": {
-                            "content": self.recurrent_event
-                        }
-                    }]
-                },
-                self.cfg.col_description: {
-                    "rich_text": [{
-                        "text": {
-                            "content": self.description
-                        }
-                    }]
-                },
-                self.cfg.col_gcal_calendar_id: {
-                    "select": {
-                        "name": self.gcal_calendar_id
-                    }
-                },
-                self.cfg.col_gcal_calendar_name: {
-                    "select": {
-                        "name": self.gcal_calendar_name
-                    }
-                },
-                self.cfg.col_location: {
-                    "rich_text": [{
-                        "text": {
-                            "content": self.location
-                        }
-                    }]
-                },
-                self.cfg.col_gcal_event_id: {
-                    "rich_text": [{
-                        "text": {
-                            "content": self.gcal_event_id
-                        }
-                    }]
-                },
-                self.cfg.col_last_synced_time: {
-                    "rich_text": [{
-                        "text": {
-                            "content": self.cfg.time.now(),
-                        }
-                    }]
-                },
-                self.cfg.col_gcal_event_url: {
-                    "url": self.gcal_page_url
-                },
-                self.cfg.col_read_only: {
-                    "checkbox": bool(self.read_only)
-                }
+            'properties': {
+                self.cfg.notion_columns['name']: {'title': [{'text': {'content': self.name}}]},
+                self.cfg.notion_columns['date']: {'date': {'start': time_start, 'end': time_end}},
+                self.cfg.notion_columns['recurrent_event']: {'rich_text': [{'text': {'content': self.recurrent_event}}]},
+                self.cfg.notion_columns['description']: {'rich_text': [{'text': {'content': self.description}}]},
+                self.cfg.notion_columns['gcal_calendar_id']: {'select': {'name': self.gcal_calendar_id}},
+                self.cfg.notion_columns['gcal_calendar_name']: {'select': {'name': self.gcal_calendar_name}},
+                self.cfg.notion_columns['location']: {'rich_text': [{'text': {'content': self.location}}]},
+                self.cfg.notion_columns['gcal_event_id']: {'rich_text': [{'text': {'content': self.gcal_event_id}}]},
+                self.cfg.notion_columns['last_synced_time']: {'rich_text': [{'text': {'content': self.cfg.time.now()}}]},
+                self.cfg.notion_columns['gcal_event_url']: {'url': self.gcal_page_url},
+                self.cfg.notion_columns['read_only']: {'checkbox': bool(self.read_only)},
             },
         }
         logging.info(body)

@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta, timezone
-import re
 import logging
+import re
+from datetime import datetime, timedelta, timezone
 
 
 class Time:
@@ -18,14 +18,14 @@ class Time:
             return True if date_match else False
         if type(dt) == datetime:
             return dt.hour == 0 and dt.minute == 0 if not dt.tzinfo else False
-        logging.error("Date {} is in some other format".format(dt))
+        logging.error('Date {} is in some other format'.format(dt))
         return None
 
     @staticmethod
     def datetime_to_str(dt: datetime) -> str or None:
         if type(dt) != datetime:
             return None
-        return dt.isoformat('T', "seconds")
+        return dt.isoformat('T', 'seconds')
 
     @staticmethod
     def datetime_to_str_date(dt: datetime) -> str or None:
@@ -35,14 +35,14 @@ class Time:
 
     @staticmethod
     def now() -> str:
-        return datetime.now().isoformat('T', "minutes")
+        return datetime.now().isoformat('T', 'minutes')
 
     def to_datetime(self, dt: str or datetime) -> datetime or None:
         if type(dt) == datetime:
             return dt
         if type(dt) == str:
             return self.str_to_datetime(dt)
-        logging.error("Date {} is in some other format".format(dt))
+        logging.error('Date {} is in some other format'.format(dt))
         return None
 
     def str_to_datetime(self, date_str: str) -> datetime or None:

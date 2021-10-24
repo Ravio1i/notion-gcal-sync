@@ -3,14 +3,14 @@ from datetime import date
 
 from notion_client import Client
 
-from ..config import Config
-from ..events.NotionEvent import NotionEvent
+from notion_gcal_sync.config import Config
+from notion_gcal_sync.events.NotionEvent import NotionEvent
 
 
 class NotionClient:
     def __init__(self, cfg: Config):
         self.cfg = cfg
-        self.client = Client(auth=self.cfg.token)
+        self.client = Client(auth=self.cfg.notion_token)
 
     def list_events(self, delete: bool = False):
         cursor = None
@@ -35,39 +35,31 @@ class NotionClient:
                     logging.warning('Event {} with no date set to today'.format(notion_event.name))
                     notion_event.time_start = notion_event.time_end = date.today()
 
-                notion_event_items.append(notion_event.dict_from_class())
+                notion_event_items.append(notion_event.to_dict())
             if not notion_event_res['has_more']:
                 break
             cursor = notion_event_res['next_cursor']
 
-        logging.info("Found {} event(s) in Notion".format(len(notion_event_items)))
+        logging.info('Found {} event(s) in Notion'.format(len(notion_event_items)))
         return notion_event_items
 
     def query_items(self, delete: bool = False, cursor: str = None):
         body = {
-                'database_id': self.cfg.database_id,
-                'filter': {
-                    'and': [
-                        {
-                            'property': self.cfg.col_to_delete,
-                            'checkbox': {
-                                'equals': delete
-                            }
-                        }, {
-                            'property': self.cfg.col_deleted,
-                            'checkbox': {
-                                'equals': False
-                            }
-                        }]
-                }
-            }
+            'database_id': self.cfg.notion_database_id,
+            'filter': {
+                'and': [
+                    {'property': self.cfg.notion_columns['to_delete'], 'checkbox': {'equals': delete}},
+                    {'property': self.cfg.notion_columns['deleted'], 'checkbox': {'equals': False}},
+                ]
+            },
+        }
         if cursor:
             body['start_cursor'] = cursor
 
         return self.client.databases.query(**body)
 
     def create_event(self, notion_event: NotionEvent) -> dict:
-        header = {"parent": {"database_id": self.cfg.database_id}}
+        header = {'parent': {'database_id': self.cfg.notion_database_id}}
         return self.client.pages.create(**header, **notion_event.body())
 
     def update_event(self, notion_event: NotionEvent) -> dict:
@@ -76,30 +68,19 @@ class NotionClient:
 
     def delete_event(self, notion_event: NotionEvent) -> dict:
         """Currently only puts match to True as notion api does not support delete"""
-        return self.client.pages.update(notion_event.notion_id, **{
-            "properties": {
-                self.cfg.col_deleted: {
-                    'checkbox': True
-                }
-            }
-        })
+        return self.client.pages.update(
+            notion_event.notion_id, **{'properties': {self.cfg.notion_columns['deleted']: {'checkbox': True}}}
+        )
 
     def set_sync_error(self, notion_event: NotionEvent) -> dict:
-        return self.client.pages.update(notion_event.notion_id, **{
-            "properties": {
-                self.cfg.col_last_synced_time: {
-                    "rich_text": [{
-                        "text": {
-                            "content": 'ERROR'
-                        }
-                    }]
-                }
-            }
-        })
+        return self.client.pages.update(
+            notion_event.notion_id,
+            **{'properties': {self.cfg.notion_columns['last_synced_time']: {'rich_text': [{'text': {'content': 'ERROR'}}]}}},
+        )
 
     def update_gcal_link(self, notion_event: NotionEvent, gcal_gcal_page_url: str):
-        if gcal_gcal_page_url == notion_event.gcal_page_url.replace('&ctz=' + self.cfg.time.timezone_name, ''):
+        if gcal_gcal_page_url == notion_event.gcal_page_url.replace('&ctz=' + self.cfg.timezone_name, ''):
             return
         logging.info('- Updating gcal page url for event "{}" in Notion'.format(notion_event.name))
-        notion_event.gcal_page_url = gcal_gcal_page_url + '&ctz=' + self.cfg.time.timezone_name
+        notion_event.gcal_page_url = gcal_gcal_page_url + '&ctz=' + self.cfg.timezone_name
         self.update_event(notion_event)
