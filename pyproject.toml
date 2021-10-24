@@ -26,6 +26,7 @@ flake8 = "4.0.1"
 poetry = "^1.1.11"
 poetry2setup = "^1.0.0"
 pre-commit = "^2.15.0"
+python-semantic-release = "^7.19.2"
 
 [tool.poetry.scripts]
 notion-gcal-sync = "notion_gcal_sync.__main__:main"
