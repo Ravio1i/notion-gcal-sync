@@ -1,0 +1,7 @@
+pytest == "6.2.4"
+pytest - cov == "3.0.0"
+flake8 == "4.0.1"
+poetry == "^1.1.11"
+poetry2setup == "^1.0.0"
+pre - commit == "^2.15.0"
+python - semantic - release == "^7.19.2"

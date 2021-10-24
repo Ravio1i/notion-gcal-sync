@@ -6,22 +6,22 @@ from notion_gcal_sync.config import Config
 
 class Event:
     def __init__(
-            self,
-            name: str = None,
-            description: str = None,
-            location: str = None,
-            gcal_event_id: str = None,
-            gcal_calendar_name: str = None,
-            gcal_calendar_id: str = None,
-            time_start: str or datetime = None,
-            time_end: str or datetime = None,
-            recurrent_event: str = None,
-            time_last_updated: datetime = None,
-            time_last_synced: str = None,
-            notion_page_url: str = None,
-            gcal_page_url: str = None,
-            read_only: bool = None,
-            cfg: Config = None,
+        self,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        gcal_event_id: str = None,
+        gcal_calendar_name: str = None,
+        gcal_calendar_id: str = None,
+        time_start: str or datetime = None,
+        time_end: str or datetime = None,
+        recurrent_event: str = None,
+        time_last_updated: datetime = None,
+        time_last_synced: str = None,
+        notion_page_url: str = None,
+        gcal_page_url: str = None,
+        read_only: bool = None,
+        cfg: Config = None,
     ):
         self.cfg = cfg if cfg else Config()
         # Properties
@@ -39,11 +39,11 @@ class Event:
         self.time_end = self.cfg.time.to_datetime(time_end)
         # Apply default length when no end is specified but a time is given
         if (
-                self.time_start
-                and self.time_end
-                and not self.cfg.time.is_date(self.time_start)
-                and not self.cfg.time.is_date(self.time_end)
-                and self.time_start == self.time_end
+            self.time_start
+            and self.time_end
+            and not self.cfg.time.is_date(self.time_start)
+            and not self.cfg.time.is_date(self.time_end)
+            and self.time_start == self.time_end
         ):
             self.time_end = self.time_start + timedelta(minutes=self.cfg.default_event_length)
 
@@ -56,9 +56,9 @@ class Event:
 
     def to_dict(self):
         return dict(
-            (key.replace('_', '', 1), value) if key.startswith('_') else (key, value)
+            (key.replace("_", "", 1), value) if key.startswith("_") else (key, value)
             for (key, value) in self.__dict__.items()
-            if not key.startswith('__') and key != 'cfg'
+            if not key.startswith("__") and key != "cfg"
         )
 
     @property
@@ -67,7 +67,7 @@ class Event:
 
     @read_only.setter
     def read_only(self, value):
-        self._read_only = True if value in [True, 'True'] else False
+        self._read_only = True if value in [True, "True"] else False
 
     def set_calendar(self, gcal_calendar_id: str, gcal_calendar_name: str) -> (str, str):
         """
@@ -88,8 +88,8 @@ class Event:
         if not self.cfg.is_valid_calendar_id(gcal_calendar_id) and self.cfg.is_valid_calendar_name(gcal_calendar_name):
             return self.cfg.get_calendar_id(gcal_calendar_name), gcal_calendar_name
         # Internal calendar from Google not to tweak with
-        if gcal_calendar_name == 'Google Calendar':
-            return 'skip', 'skip'
+        if gcal_calendar_name == "Google Calendar":
+            return "skip", "skip"
 
         logging.debug(
             'Different organizer calendar "{}" for event "{}". Using default calendar {}'.format(

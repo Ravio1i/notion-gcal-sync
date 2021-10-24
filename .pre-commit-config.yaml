@@ -6,14 +6,33 @@ repos:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
-      - id: double-quote-string-fixer
       - id: no-commit-to-branch
         args : [--branch, main, --branch, release]
       - id: mixed-line-ending
       - id: check-toml
       - id: check-merge-conflict
+
   - repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
     hooks:
       - id: flake8
         additional_dependencies: [ flake8-typing-imports==1.7.0 ]
+
+  - repo: local
+    hooks:
+    - id: black
+      name: black
+      language: system
+      entry: black
+      minimum_pre_commit_version: 2.9.2
+      require_serial: true
+      types_or: [python, pyi]
+
+    - id: pytest
+      name: pytest
+      stages: [commit]
+      language: system
+      entry: poetry run pytest -s -v .
+      types: [python]
+      pass_filenames: false
+      always_run: true

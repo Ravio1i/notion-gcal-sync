@@ -34,14 +34,15 @@ notion-gcal-sync = "notion_gcal_sync.__main__:main"
 [tool.black]
 line-length = 128
 include = '\.pyi?$'
-    exclude = '''
-    /(
-        \.git
-      | build
-      | dist
-      | blib2to3
-      | tests/assets
-    )/
+force-exclude = '''
+/(
+    \.git
+  | \.idea
+  | build
+  | dist
+  | blib2to3
+  | tests/assets
+)/
 '''
 
 [tool.semantic_release]
