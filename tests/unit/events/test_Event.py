@@ -12,9 +12,17 @@ def test_empty_event():
 @pytest.mark.parametrize(
     "test_input, expected", [("False", False), (None, False), (True, True), ("True", True)],
 )
-def test_read_only(event_fixture, test_input, expected):
+def test_read_only(test_input, expected):
     event = Event(read_only=test_input)
     assert event.read_only == expected
+
+
+@pytest.mark.parametrize(
+    "test_input, expected", [(3000 * "#", 2000 * "#"), ("hello", "hello"), (None, "")],
+)
+def test_description_too_long(test_input, expected):
+    event = Event(description=test_input)
+    assert event.description == expected
 
 
 def test_default_event_length(config_fixture):
