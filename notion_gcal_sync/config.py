@@ -34,7 +34,7 @@ class Config:
         no_date_action: str = "skip",
         gcal_calendars=None,
         gcal_default_calendar_name: str = "Default",
-        notion_database_url: str = None,
+        notion_database_url: str = "https://www.notion.so/***?v=***&p=",
         notion_token: str = None,
         notion_columns: dict = None,
         timezone_name: str = "Europe/Berlin",
