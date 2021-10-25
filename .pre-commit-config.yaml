@@ -36,3 +36,9 @@ repos:
       types: [python]
       pass_filenames: false
       always_run: true
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: master
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
