@@ -27,6 +27,7 @@ poetry = "^1.1.11"
 poetry2setup = "^1.0.0"
 pre-commit = "^2.15.0"
 python-semantic-release = "^7.19.2"
+commitizen = "^2.20.0"
 
 [tool.poetry.scripts]
 notion-gcal-sync = "notion_gcal_sync.__main__:main"
