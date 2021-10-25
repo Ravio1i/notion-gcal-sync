@@ -44,6 +44,7 @@ jobs:
     needs: Test
     # https://github.community/t/how-do-i-specify-job-dependency-running-in-another-workflow/16482
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
+    concurrency: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -56,11 +57,16 @@ jobs:
         uses: abatilo/actions-poetry@v2.1.0
         with:
           poetry-version: 1.1.11
-      - name: Semantic version upgrade and release to Pypi
-        uses: relekang/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+      - name: Configure poetry
+        shell: bash
+        run: |
+          python -m poetry config virtualenvs.in-project true
+          python -m poetry install
+      - name: Semantic Release
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          semantic-release publish
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
