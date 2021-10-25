@@ -11,7 +11,7 @@ gcal_calendars:
   Work: '***@group.calendar.google.com'
 gcal_default_calendar_name: "Default"
 
-notion_database_url: 'https://www.notion.so/*/***?v=***&p='
+notion_database_url: 'https://www.notion.so/***?v=***&p='
 notion_token: '***'
 notion_columns:
   name: 'Name'

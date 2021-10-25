@@ -22,7 +22,14 @@ def test_empty_config():
 )
 def test_database_id(time_fixture, notion_columns_fixture, test_url, expected):
     config = Config(
-        60, "skip", {"Default": "dude@gmail.com"}, "Default", test_url, "SECRET", notion_columns_fixture, time_fixture,
+        60,
+        "skip",
+        {"Default": "dude@gmail.com"},
+        "Default",
+        test_url,
+        "SECRET",
+        notion_columns_fixture,
+        time_fixture,
     )
     assert config.notion_database_id == expected
 
@@ -33,7 +40,8 @@ def test_default_event_length(config_fixture):
 
 
 @pytest.mark.parametrize(
-    "test_action, expected", [("skip", "skip"), ("today", "today"), ("something_else", "skip")],
+    "test_action, expected",
+    [("skip", "skip"), ("today", "today"), ("something_else", "skip")],
 )
 def test_no_date_action(config_fixture, test_action, expected):
     config_fixture.no_date_action = test_action

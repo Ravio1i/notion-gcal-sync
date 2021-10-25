@@ -6,8 +6,8 @@ repos:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
-      #- id: no-commit-to-branch
-      #  args : [--branch, main]
+      - id: no-commit-to-branch
+        args : [--branch, main]
       - id: mixed-line-ending
       - id: check-toml
       - id: check-merge-conflict
@@ -28,17 +28,8 @@ repos:
       require_serial: true
       types_or: [python, pyi]
 
-    - id: pytest
-      name: pytest
-      stages: [commit]
-      language: system
-      entry: poetry run pytest -s -v .
-      types: [python]
-      pass_filenames: false
-      always_run: true
-
-#  - repo: https://github.com/commitizen-tools/commitizen
-#    rev: v2.20.0
-#    hooks:
-#      - id: commitizen
-#        stages: [commit-msg]
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.20.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
