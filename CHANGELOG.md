@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.3 (2021-10-25)
+### Fix
+* Env for release ([`4bc4654`](https://github.com/Ravio1i/notion-gcal-sync/commit/4bc46544617b26bcaa49cef464ddcb82ccb0b8e3))
+
 ## v1.0.2 (2021-10-25)
 ### Fix
 * Use poetry with semantic-release (PR #13) ([`cf1eb65`](https://github.com/Ravio1i/notion-gcal-sync/commit/cf1eb6594628f6a4baba82773a6569be022d7bc2))
