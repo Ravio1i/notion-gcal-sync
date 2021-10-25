@@ -67,6 +67,9 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           poetry run semantic-release publish
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
