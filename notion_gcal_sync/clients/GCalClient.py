@@ -66,7 +66,10 @@ class GCalClient:
             gcal_events_res = (
                 self.service.events()
                 .list(
-                    calendarId=calendar_id, pageToken=page_token, timeZone=self.cfg.time.timezone_name, maxResults=max_results,
+                    calendarId=calendar_id,
+                    pageToken=page_token,
+                    timeZone=self.cfg.time.timezone_name,
+                    maxResults=max_results,
                 )
                 .execute()
             )
@@ -127,7 +130,11 @@ class GCalClient:
             return
         return (
             self.service.events()
-            .update(calendarId=gcal_event.gcal_calendar_id, eventId=gcal_event.gcal_event_id, body=gcal_event.body,)
+            .update(
+                calendarId=gcal_event.gcal_calendar_id,
+                eventId=gcal_event.gcal_event_id,
+                body=gcal_event.body,
+            )
             .execute()
         )
         # TODO: what to do about forbidden

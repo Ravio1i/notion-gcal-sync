@@ -10,7 +10,8 @@ def test_empty_event():
 
 
 @pytest.mark.parametrize(
-    "test_input, expected", [("False", False), (None, False), (True, True), ("True", True)],
+    "test_input, expected",
+    [("False", False), (None, False), (True, True), ("True", True)],
 )
 def test_read_only(test_input, expected):
     event = Event(read_only=test_input)
@@ -18,7 +19,8 @@ def test_read_only(test_input, expected):
 
 
 @pytest.mark.parametrize(
-    "test_input, expected", [(3000 * "#", 2000 * "#"), ("hello", "hello"), (None, "")],
+    "test_input, expected",
+    [(3000 * "#", 2000 * "#"), ("hello", "hello"), (None, "")],
 )
 def test_description_too_long(test_input, expected):
     event = Event(description=test_input)
@@ -26,7 +28,11 @@ def test_description_too_long(test_input, expected):
 
 
 def test_default_event_length(config_fixture):
-    event = Event(time_start=datetime(2021, 12, 10, 10, 30), time_end=datetime(2021, 12, 10, 10, 30), cfg=config_fixture,)
+    event = Event(
+        time_start=datetime(2021, 12, 10, 10, 30),
+        time_end=datetime(2021, 12, 10, 10, 30),
+        cfg=config_fixture,
+    )
     assert event.time_end == datetime(2021, 12, 10, 11, 30)
 
 
@@ -64,6 +70,10 @@ def test_set_calendar(event_fixture, test_calendar_id, test_calendar_name, expec
 
 
 def test_different_calendar(config_fixture):
-    event = Event(gcal_calendar_id="dude@gmail.com", gcal_calendar_name="Calendar2", cfg=config_fixture,)
+    event = Event(
+        gcal_calendar_id="dude@gmail.com",
+        gcal_calendar_name="Calendar2",
+        cfg=config_fixture,
+    )
     assert event.gcal_calendar_name == "Calendar2"
     assert event.gcal_calendar_id == "abc123@group.calendar.google.com"

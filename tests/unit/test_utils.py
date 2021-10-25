@@ -12,7 +12,10 @@ from notion_gcal_sync.utils import Time
         ("2017-10-25T19:00:00.000+02:00", False),
         ("2017-10-25T19:00:00.000", False),
         ("2017-10-25", True),
-        (datetime(2017, 10, 25, 00, 00, tzinfo=timezone(timedelta(seconds=7200))), False,),
+        (
+            datetime(2017, 10, 25, 00, 00, tzinfo=timezone(timedelta(seconds=7200))),
+            False,
+        ),
         (None, None),
     ],
 )
@@ -23,7 +26,10 @@ def test_is_date(test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        (datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))), "2017-10-25T13:37:10+02:00",),
+        (
+            datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))),
+            "2017-10-25T13:37:10+02:00",
+        ),
         (None, None),
     ],
 )
@@ -35,7 +41,10 @@ def test_datetime_to_str(test_input, expected):
     "test_input, expected",
     [
         (datetime(2017, 10, 25), "2017-10-25"),
-        (datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))), "2017-10-25",),
+        (
+            datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))),
+            "2017-10-25",
+        ),
         (None, None),
     ],
 )
@@ -65,10 +74,22 @@ def time():
     [
         (None, None),
         ("2017-10-25", datetime(2017, 10, 25)),
-        ("2017-10-25T00:00", datetime(2017, 10, 25, 00, 00, tzinfo=timezone(timedelta(seconds=7200))),),
-        ("2017-10-25T10:10", datetime(2017, 10, 25, 10, 10, tzinfo=timezone(timedelta(seconds=7200))),),
-        ("2017-10-25T10:10+01:00", datetime(2017, 10, 25, 11, 10, tzinfo=timezone(timedelta(seconds=7200))),),
-        ("2017-10-25T10:10+03:00", datetime(2017, 10, 25, 9, 10, tzinfo=timezone(timedelta(seconds=7200))),),
+        (
+            "2017-10-25T00:00",
+            datetime(2017, 10, 25, 00, 00, tzinfo=timezone(timedelta(seconds=7200))),
+        ),
+        (
+            "2017-10-25T10:10",
+            datetime(2017, 10, 25, 10, 10, tzinfo=timezone(timedelta(seconds=7200))),
+        ),
+        (
+            "2017-10-25T10:10+01:00",
+            datetime(2017, 10, 25, 11, 10, tzinfo=timezone(timedelta(seconds=7200))),
+        ),
+        (
+            "2017-10-25T10:10+03:00",
+            datetime(2017, 10, 25, 9, 10, tzinfo=timezone(timedelta(seconds=7200))),
+        ),
     ],
 )
 def test_str_to_datetime(time_fixture, test_input, expected):
@@ -81,7 +102,8 @@ def test_utc_str_to_datetime():
 
 
 @pytest.mark.parametrize(
-    "test_input, expected", [(datetime(2017, 10, 25), datetime(2017, 10, 25)), (None, None)],
+    "test_input, expected",
+    [(datetime(2017, 10, 25), datetime(2017, 10, 25)), (None, None)],
 )
 def test_to_datetime(time_fixture, test_input, expected):
     assert time_fixture.to_datetime(test_input) == expected
