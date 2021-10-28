@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.1 (2021-10-28)
+### Fix
+* Docker image and update docs #16  ([`cfdad3a`](https://github.com/Ravio1i/notion-gcal-sync/commit/cfdad3ac8882108ce1646e834c021fe1dec61908))
+* Use user home with new config ([`e1d8873`](https://github.com/Ravio1i/notion-gcal-sync/commit/e1d8873e67abf94ef88cdb3d9866a71f33590a20))
+
+### Documentation
+* Update docs for docker usage and update setup ([`c1f5e9e`](https://github.com/Ravio1i/notion-gcal-sync/commit/c1f5e9ef34657a0237c3dfb6e440088c2c8ff0c4))
+
 ## v1.1.0 (2021-10-25)
 ### Feature
 * Auto-config when not existing (PR #14) ([`de1559b`](https://github.com/Ravio1i/notion-gcal-sync/commit/de1559bd961c6830e961299d56bb707506f5ec62))
