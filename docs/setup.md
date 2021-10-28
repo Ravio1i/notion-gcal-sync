@@ -18,27 +18,13 @@ docker pull ghrc.io/ravio1i/notion-gcal-sync
 
 ## Configuration
 
-Additionally, to installing the python package you will need to properly configure and authenticate. This requires the 2 files:
+Additionally, to installing the python package you will need to properly configure and authenticate.
+This requires the 2 files in your user home `~/.notion-gcal-sync` (`C:\Users\dude\.notion-gcal-sync`)
 
 * `config.yml`
 * `client_secret.yml`
 
-The default `config.yml` is included in the installation and can be found in its python library directory. This file will be
-configured in the following setup. To get the location of your `config.yml`:
-
-* Linux (or WSL):
-    ```bash
-    NOTION_GCAL_SYNC_LIB="$(pip list -v [--user] | grep notion-gcal-sync | awk '{print $3}')/notion_gcal_sync"
-    ls $NOTION_GCAL_SYNC_LIB
-    ```
-
-* Windows:
-
-  Search where your Python library got installed.
-    ```powershell
-    # TODO
-    ```
-
+The default `config.yml` is included in the installation and can be found in the repo root. If no `config.yml` exists in the `~/.notion-gcal-sync` folder you'll be prompted on the next run of the application.
 ## Setup credentials for Google Calendar
 
 The following is a summary of [this](https://developers.google.com/workspace/guides/create-credentials) and will get you the
@@ -72,22 +58,6 @@ credentials for authenticating against your Google calendar.
 The `token.json` will store the user's access and refresh tokens as json and is created automatically when the authorization
 flow completes for the first time.
 
-10. Move your credentials into this folder as `client_secret.json`.
-
-    **Linux (or WSL)**
-    ```bash
-    NOTION_GCAL_SYNC_LIB="$(pip list -v | grep notion-gcal-sync | awk '{print $3}')/notion_gcal_sync"
-    cp client_secret_*.apps.googleusercontent.com.json "$NOTION_GCAL_SYNC_LIB/client_secret.json"
-    ```
-
-    **Windows**
-
-    Search where your Python library got installed and copy your `client_secret_*.apps.googleusercontent.com.json`
-    as `client_secret.json`. inside
-    ```powershell
-    # TODO
-    ```
-
 ## Setup credentials for Notion
 
 The following is a summary of [this](https://developers.notion.com/docs/authorization) and will set up your notion integration
@@ -96,13 +66,7 @@ to authenticate this application for notion.
 1. Navigate to [Notion Integrations](https://www.notion.so/my-integrations).
 2. Click `Create new integration` and give it name, like `notion-gcal-sync`.
 3. On the page of the integration copy the contents of your `Internal Integration Token`.
-4. Insert your token data in your `config.yml`:
-   ```yaml
-   ...
-   notion:
-      ...
-      token: '***'
-   ```
+
 
 ### Set up your Notion page
 
@@ -114,17 +78,6 @@ to authenticate this application for notion.
 
 2. Click `Share` in the top right corner of your duplicated page and `Invite`
    your [Notion Integration](#setup-credentials-for-notion) with `Can edit` .
-
-3. Copy the URL of your duplicated page and add it to your `config.yml`.
-
-   **Append a `&p=` to the URL.**
-
-    ```yaml
-   ...
-   notion:
-      notion_url: https://www.notion.so/[subdomain]/***?v=***&p=
-      token: '***'
-   ```
 
 ## Integrate your google calendars
 
@@ -149,7 +102,6 @@ to authenticate this application for notion.
 
 ### Columns
 
-Automatic: You should not change these values yourself!
 
 * `Name (text)`: The name (summary) of an event.
 * `Date (date)`: The date of the event. If nothing is specified the `no_date_action` will be used.

@@ -1,23 +1,18 @@
-FROM python:3.9
+FROM python:3.9-slim
 
 ENV USER worker
-ENV WORKDIR /app
-ENV PATH "${WORKDIR}/${USER}/.local/bin:${PATH}"
+ENV PATH "/home/${USER}/.local/bin:${PATH}"
 
+RUN useradd -m $USER --shell /bin/bash
 
-RUN useradd -m $USER -b $WORKDIR --shell /bin/bash
-
-WORKDIR $WORKDIR
+WORKDIR /home/$USER
 
 COPY . .
-RUN chown -R $USER:$USER $WORKDIR
-
-
 USER $USER
 
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install -r requirements.txt
 
-ENV PYTHONPATH $WORKDIR
+ENV PYTHONPATH "/home/$USER"
 
 ENTRYPOINT ["python", "notion_gcal_sync/__main__.py"]
