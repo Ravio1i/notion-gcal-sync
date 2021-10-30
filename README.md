@@ -88,7 +88,7 @@ If you want to update the setup within the cli or only map the credentials, you'
 
 ```yaml
 docker run --net=host -it \
-     -v ~/.notion-gcal-sync/client_credentials.json:/home/worker/notion-gcal-sync/client_credentials.json \
+     -v ~/.notion-gcal-sync/client_secret.json:/home/worker/notion-gcal-sync/client_secret.json \
      notion-gcal-sync
 ```
 

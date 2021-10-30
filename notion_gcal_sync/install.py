@@ -12,7 +12,7 @@ CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".notion-gcal-sync")
 CONFIG_FILE = os.path.join(CONFIG_PATH, "config.yml")
 CONFIG_DEFAULT_FILE = os.path.join(CONFIG_PATH, "config.default.yml")
 TOKEN_FILE = os.path.join(CONFIG_PATH, "token.json")
-CREDENTIALS_FILE = os.path.join(CONFIG_PATH, "client_credentials.json")
+CLIENT_SECRET_FILE = os.path.join(CONFIG_PATH, "client_secret.json")
 
 
 def confirm_create_path(path: str) -> bool:
@@ -55,23 +55,23 @@ def config_file_created() -> bool:
     return True
 
 
-def credentials_created() -> bool:
-    if not os.path.exists(TOKEN_FILE) and os.path.exists(CREDENTIALS_FILE):
+def client_secret_created() -> bool:
+    if not os.path.exists(TOKEN_FILE) and os.path.exists(CLIENT_SECRET_FILE):
         logging.info("{} does not exist".format(TOKEN_FILE))
         logging.info("Generating token file {}".format(TOKEN_FILE))
         GCalClient.get_credentials()
     if os.path.exists(TOKEN_FILE):
         return True
-    logging.error("{} nor {} exist".format(CREDENTIALS_FILE, TOKEN_FILE))
+    logging.error("{} nor {} exist".format(CLIENT_SECRET_FILE, TOKEN_FILE))
     logging.info(
-        "Please follow the instructions on setting up the client_credentials.json: "
+        "Please follow the instructions on setting up the client_secret.json: "
         "https://github.com/Ravio1i/notion-gcal-sync/blob/main/docs/setup.md#setup-credentials-for-google-calendar"
     )
     return False
 
 
 def configure():
-    confirmed = config_path_created() and config_file_created() and credentials_created()
+    confirmed = config_path_created() and config_file_created() and client_secret_created()
     if not confirmed:
         logging.info("Exiting...")
         sys.exit()

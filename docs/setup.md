@@ -30,12 +30,13 @@ The default `config.yml` is included in the installation and can be found in the
 The following is a summary of [this](https://developers.google.com/workspace/guides/create-credentials) and will get you the
 credentials for authenticating against your Google calendar.
 
-1. New Project and call it something e.g `notion`. (Note: Make sure to select the newly created project)
-2. Navigate to the [API Library](https://console.cloud.google.com/apis/).
-3. Search for `Google Calendar API` and `Enable`.
-4. Navigate to the [API Credentials Page](https://console.cloud.google.com/apis/credentials).
-5. Click `+ Create Credentials` > `OAuth client ID`
-6. If Consent Screen > `CONFIGURE CONSENT SCREEN`
+1. Open [Google Cloud Platform Console](https://console.cloud.google.com/).
+2. New Project and call it something e.g `notion`. (Note: Make sure to select the newly created project)
+3. Navigate to the [API Library](https://console.cloud.google.com/apis/).
+4. Search for `Google Calendar API` and `Enable`.
+5. Navigate to the [API Credentials Page](https://console.cloud.google.com/apis/credentials).
+6. Click `+ Create Credentials` > `OAuth client ID`
+7. If Consent Screen > `CONFIGURE CONSENT SCREEN`
     1. OAuth consent Screen
         1. Set User Type to `External`
         2. For App information use any App name, like `notion-gcal-sync` and for support email use your email.
@@ -48,8 +49,8 @@ credentials for authenticating against your Google calendar.
     3. Test users
         1. `+ Add users` and add your email
         2. `Save and continue` (The error `Ineligible accounts not added` can be ignored)
-7. Navigate to the [API Credentials Page](https://console.cloud.google.com/apis/credentials).
-8. Click `+ Create Credentials` > `OAuth client ID`
+8. Navigate to the [API Credentials Page](https://console.cloud.google.com/apis/credentials).
+9. Click `+ Create Credentials` > `OAuth client ID`
     1. Select `Desktop App` with any name, like `notion-gcal-sync`
     2. `Create`
     3. In the new prompt `DOWNLOAD JSON` or on the just created credentials on `Actions` click the `Download OAuth client`
