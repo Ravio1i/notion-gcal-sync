@@ -8,6 +8,8 @@ RUN useradd -m $USER --shell /bin/bash
 WORKDIR /home/$USER
 
 COPY . .
+RUN chown -R $USER:$USER "/home/$USER"
+
 USER $USER
 
 RUN pip install --no-cache-dir --upgrade pip
