@@ -37,7 +37,7 @@ class Time:
 
     @staticmethod
     def now() -> str:
-        return datetime.now().isoformat("T", "minutes")
+        return datetime.now().isoformat("T", "seconds")
 
     def to_datetime(self, dt: str or datetime or date) -> datetime or date or None:
         if type(dt) == datetime or type(dt) == date:

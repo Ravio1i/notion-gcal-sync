@@ -24,6 +24,7 @@ class NotionEvent(Event):
         gcal_page_url: str = None,
         notion_id: str = None,
         read_only: bool = None,
+        to_delete: bool = None,
         cfg: Config = None,
     ):
         super().__init__(
@@ -43,8 +44,17 @@ class NotionEvent(Event):
             read_only,
             cfg,
         )
+        self.to_delete = to_delete
         self.notion_id = notion_id
         # self.tags = tags
+
+    @property
+    def to_delete(self):
+        return self._to_delete
+
+    @to_delete.setter
+    def to_delete(self, value):
+        self._to_delete = True if value in [True, "True"] else False
 
     @classmethod
     def from_api(cls, obj: dict, cfg: Config):
@@ -63,6 +73,7 @@ class NotionEvent(Event):
         gcal_calendar_name = cls.get_select(props, cfg.notion_columns["gcal_calendar_name"])
         gcal_calendar_id = cls.get_select(props, cfg.notion_columns["gcal_calendar_id"])
         read_only = cls.get_checkbox(props, cfg.notion_columns["read_only"])
+        to_delete = cls.get_checkbox(props, cfg.notion_columns["to_delete"])
         # tags = cls.get_multiselect(props, cfg.col_tags)
         return cls(
             name,
@@ -80,6 +91,7 @@ class NotionEvent(Event):
             gcal_page_url,
             notion_id,
             read_only,
+            to_delete,
             cfg,
         )
 

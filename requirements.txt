@@ -1,4 +1,4 @@
-notion-client==0.7.0
+notion-client==0.7.1
 google-api-python-client==2.23.0
 google-auth-oauthlib==0.4.6
 pyyaml==5.4.1

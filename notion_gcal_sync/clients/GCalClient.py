@@ -126,7 +126,7 @@ class GCalClient:
         # try:
         if gcal_event.read_only:
             logging.info('Not updating in gcal read only event "{}"'.format(gcal_event.name))
-            return
+            return None
         return (
             self.service.events()
             .update(
