@@ -2,13 +2,13 @@ import logging
 import re
 from datetime import datetime, date
 
-import pytz
+import pendulum
 
 
 class Time:
     def __init__(self, timezone_name: str):
         self.timezone_name = timezone_name
-        self.timezone = pytz.timezone(self.timezone_name)
+        self.timezone = pendulum.timezone(self.timezone_name)
 
     @staticmethod
     def is_date(dt: datetime or str) -> bool or None:
@@ -37,7 +37,7 @@ class Time:
 
     @staticmethod
     def now() -> str:
-        return datetime.now().isoformat("T", "seconds")
+        return datetime.now().isoformat("T", "minutes")
 
     def to_datetime(self, dt: str or datetime or date) -> datetime or date or None:
         if type(dt) == datetime or type(dt) == date:
@@ -58,4 +58,7 @@ class Time:
             return datetime.strptime(date_str, "%Y-%m-%d").date()
 
         dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
-        return dt.astimezone(self.timezone)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=self.timezone)
+        dt = dt.astimezone(self.timezone)
+        return dt

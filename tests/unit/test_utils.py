@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone, date
 from zoneinfo import ZoneInfo
 
 import pytest
-import pytz
+import pendulum
 
 from notion_gcal_sync.utils import Time
 
@@ -56,9 +56,9 @@ def test_datetime_to_str_date(test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        ("Europe/Berlin", pytz.timezone("Europe/Berlin")),
-        ("UTC", pytz.timezone("UTC")),
-        ("America/Los_Angeles", pytz.timezone("America/Los_Angeles")),
+        ("Europe/Berlin", pendulum.timezone("Europe/Berlin")),
+        ("UTC", pendulum.timezone("UTC")),
+        ("America/Los_Angeles", pendulum.timezone("America/Los_Angeles")),
     ],
 )
 def test_time(test_input, expected):
