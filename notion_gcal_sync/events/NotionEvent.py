@@ -140,6 +140,7 @@ class NotionEvent(Event):
         except KeyError:
             return False
 
+    @property
     def body(self) -> dict:
         if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
             time_start = self.cfg.time.datetime_to_str_date(self.time_start)

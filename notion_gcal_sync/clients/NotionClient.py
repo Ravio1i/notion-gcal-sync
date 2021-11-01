@@ -60,11 +60,11 @@ class NotionClient:
 
     def create_event(self, notion_event: NotionEvent) -> dict:
         header = {"parent": {"database_id": self.cfg.notion_database_id}}
-        return self.client.pages.create(**header, **notion_event.body())
+        return self.client.pages.create(**header, **notion_event.body)
 
     def update_event(self, notion_event: NotionEvent) -> dict:
         """This checks off that the event has been put on Google Calendar"""
-        return self.client.pages.update(notion_event.notion_id, **notion_event.body())
+        return self.client.pages.update(notion_event.notion_id, **notion_event.body)
 
     def delete_event(self, notion_event: NotionEvent) -> dict:
         """Currently only puts match to True as notion api does not support delete"""
