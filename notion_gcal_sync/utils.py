@@ -1,6 +1,6 @@
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, date
 
 import pytz
 
@@ -16,6 +16,8 @@ class Time:
         if type(dt) == str:
             date_match = re.match(r"[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]$", dt)
             return True if date_match else False
+        if type(dt) == date:
+            return True
         if type(dt) == datetime:
             return dt.hour == 0 and dt.minute == 0 if not dt.tzinfo else False
         logging.error("Date {} is in some other format".format(dt))
@@ -37,15 +39,15 @@ class Time:
     def now() -> str:
         return datetime.now().isoformat("T", "minutes")
 
-    def to_datetime(self, dt: str or datetime) -> datetime or None:
-        if type(dt) == datetime:
+    def to_datetime(self, dt: str or datetime or date) -> datetime or date or None:
+        if type(dt) == datetime or type(dt) == date:
             return dt
         if type(dt) == str:
             return self.str_to_datetime(dt)
         logging.error("Date {} is in some other format".format(dt))
         return None
 
-    def str_to_datetime(self, date_str: str) -> datetime or None:
+    def str_to_datetime(self, date_str: str) -> datetime or date or None:
         if not date_str:
             return None
 
@@ -53,7 +55,7 @@ class Time:
         date_str = date_str.replace("Z", "+00:00")
 
         if self.is_date(date_str):
-            return datetime.fromisoformat(date_str)
+            return datetime.strptime(date_str, "%Y-%m-%d").date()
 
         dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
         return dt.astimezone(self.timezone)
