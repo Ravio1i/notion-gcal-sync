@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -40,7 +40,7 @@ def test_datetime_to_str(test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        (datetime(2017, 10, 25), "2017-10-25"),
+        (date(2017, 10, 25), "2017-10-25"),
         (
             datetime(2017, 10, 25, 13, 37, 10, 11, tzinfo=timezone(timedelta(seconds=7200))),
             "2017-10-25",
@@ -55,13 +55,14 @@ def test_datetime_to_str_date(test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        (Time("Europe/Berlin"), timedelta(hours=2, minutes=0)),
-        (Time("UTC"), timedelta(hours=0, minutes=0)),
-        (Time("America/Los_Angeles"), timedelta(hours=-7, minutes=0)),
+        ("Europe/Berlin", timedelta(hours=2, minutes=0)),
+        ("UTC", timedelta(hours=0, minutes=0)),
+        ("America/Los_Angeles", timedelta(hours=-7, minutes=0)),
     ],
 )
 def test_time(test_input, expected):
-    assert test_input.timezone == expected
+    time = Time(test_input)
+    assert time.timezone == expected
 
 
 @pytest.fixture()
@@ -73,9 +74,9 @@ def time():
     "test_input, expected",
     [
         (None, None),
-        ("2017-10-25", datetime(2017, 10, 25)),
+        ("2017-10-25", date(2017, 10, 25)),
         (
-            "2017-10-25T00:00",
+            "2017-10-25T00:00:00",
             datetime(2017, 10, 25, 00, 00, tzinfo=timezone(timedelta(seconds=7200))),
         ),
         (
