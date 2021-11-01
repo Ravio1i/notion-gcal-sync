@@ -34,8 +34,8 @@ class GCalClient:
             if credentials and credentials.expired and credentials.refresh_token:
                 credentials.refresh(Request())
             else:
-                credentials_path = os.path.join(CONFIG_PATH, "client_credentials.json")
-                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, scopes)
+                client_secret_path = os.path.join(CONFIG_PATH, "client_secret.json")
+                flow = InstalledAppFlow.from_client_secrets_file(client_secret_path, scopes)
                 credentials = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open(token_path, "w") as token:
