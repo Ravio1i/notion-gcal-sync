@@ -16,7 +16,7 @@ def create_gcal_events(
     notion_specific_columns: list,
 ):
     logging.info("== CREATING EVENTS IN GCAL " + "=" * 73)
-    # left only indicates that the events are only present in Notion
+    # left only indicates that the events are only present in Notion. Only keep those
     notion_only_df = df.loc[df["_merge"] == "left_only"]
     # use notion_columns as columns for events to be created
     notion_only_df.columns = [
@@ -36,7 +36,7 @@ def create_gcal_events(
         notion_event = NotionEvent(**el.to_dict(), cfg=notion_client.cfg)
         # Update values to make sure they are filled when not defined
         notion_event.gcal_event_id = gcal_event_res["id"]
-        notion_event.gcal_page_url = GCalEvent.get_gcal_page_url(gcal_event_res["htmlLink"])
+        notion_event.gcal_page_url = GCalEvent.get_gcal_page_url(gcal_event_res)
         # Update on notion to be synchronized
         notion_event_res = notion_client.update_event(notion_event)
         if not notion_event_res:
@@ -112,12 +112,16 @@ def update_events(
     for idx, el in diff_df.iterrows():
         # Get the values from the notion values
         gcal_updates = gcal_values_df.iloc[idx]
-        # Nothing is newer but somewhere this is a difference
         if gcal_updates["read_only"] == "True":
             logging.info("Skipping read only event {} with update".format(gcal_updates["name"]))
             continue
 
         notion_updates = notion_values_df.iloc[idx]
+        if notion_updates["to_delete"] == "True":
+            logging.debug("Skipping to be deleted event {} with update".format(notion_updates["name"]))
+            continue
+
+        # Nothing is newer but somewhere this is a difference
         if not el["time_last_updated"]["self"] or not el["time_last_updated"]["other"]:
             logging.error('The event "{}" is synced, but still there is a difference'.format(notion_updates["name"]))
             logging.error(el.loc[:, ~el.isin([""])].to_dict())
@@ -139,10 +143,9 @@ def update_events(
             gcal_event_res = gcal_client.update_event(gcal_event)
             if not gcal_event_res:
                 continue
-
             logging.info('- Synchronize event "{}" in Notion'.format(notion_updates["name"]))
             notion_event = NotionEvent(**notion_updates.to_dict(), cfg=notion_client.cfg)
-            notion_event.gcal_page_url = gcal_event_res["htmlLink"] + "&ctz=" + notion_client.cfg.time.timezone_name
+            notion_event.gcal_page_url = GCalEvent.get_gcal_page_url(gcal_event_res)
             notion_event_res = notion_client.update_event(notion_event)
             if not notion_event_res:
                 continue
@@ -152,7 +155,6 @@ def update_events(
         # GCal is newer
         if notion_last_updated < gcal_last_updated:
             gcal_updates["time_last_synced"] = gcal_client.cfg.time.now()
-
             logging.info('Event "{}" has an update in GCal'.format(gcal_updates["name"]))
             logging.info('- Updating event "{}" in Notion'.format(gcal_updates["name"]))
             notion_event = NotionEvent(
@@ -173,11 +175,11 @@ def update_events(
             notion_client.update_gcal_link(notion_event, gcal_event_res["htmlLink"])
 
 
-def delete_gcal_events(notion_client: NotionClient, gcal_client: GCalClient, notion_specific_columns: list):
+def delete_gcal_events(df: pd.DataFrame, notion_client: NotionClient, gcal_client: GCalClient, notion_specific_columns: list):
     logging.info("== DELETING EVENTS IN GCAL " + "=" * 73)
-    notion_events_delete = notion_client.list_events(delete=True)
-    notion_events_delete_df = pd.DataFrame(notion_events_delete).astype(str)
-    for idx, el in notion_events_delete_df.iterrows():
+    notion_events_delete = df.loc[df["to_delete"] == "True"]
+    logging.info("Found {} event(s) to be created in Gcal".format(len(notion_events_delete)))
+    for idx, el in notion_events_delete.iterrows():
         logging.info('- Deleting event "{}" in GCal'.format(el["name"]))
 
         gcal_event = GCalEvent(**el.drop(notion_specific_columns).to_dict(), cfg=gcal_client.cfg)
@@ -232,11 +234,12 @@ def sync(cfg):
     elif gcal_df.empty and not notion_df.empty:
         df = notion_df.copy()
         df["color_id"] = ""
-        gcal_df = pd.DataFrame(columns=df.columns).drop(["notion_id"])
+        gcal_df = pd.DataFrame(columns=df.columns).drop(columns=["notion_id", "to_delete"])
         df["_merge"] = "left_only"
     elif notion_df.empty and not gcal_df.empty:
         df = gcal_df.copy()
         df["notion_id"] = ""
+        df["to_delete"] = "False"
         notion_df = pd.DataFrame(columns=df.columns).drop(columns=["color_id"])
         df["_merge"] = "right_only"
     else:
@@ -247,7 +250,6 @@ def sync(cfg):
     df = df.astype(object).where(pd.notnull(df), "")
     notion_specific_columns = list(set(notion_df.columns) - set(gcal_df.columns))
     gcal_specific_columns = list(set(gcal_df.columns) - set(notion_df.columns))
-
     ###########################################################################
     # SYNCING
     ###########################################################################
@@ -266,4 +268,4 @@ def sync(cfg):
         notion_specific_columns,
     )
     # GCAL events to be deleted
-    delete_gcal_events(notion_client, gcal_client, notion_specific_columns)
+    delete_gcal_events(notion_df, notion_client, gcal_client, notion_specific_columns)
