@@ -55,18 +55,18 @@ def test_datetime_to_str_date(test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        (Time("Europe/Berlin", "+02:00"), timedelta(hours=2, minutes=0)),
-        (Time("UTC", "+00:00"), timedelta(hours=0, minutes=0)),
-        (Time("America/Los_Angeles", "-07:00"), timedelta(hours=-7, minutes=0)),
+        (Time("Europe/Berlin"), timedelta(hours=2, minutes=0)),
+        (Time("UTC"), timedelta(hours=0, minutes=0)),
+        (Time("America/Los_Angeles"), timedelta(hours=-7, minutes=0)),
     ],
 )
 def test_time(test_input, expected):
-    assert test_input.timezone_diff_delta == expected
+    assert test_input.timezone == expected
 
 
 @pytest.fixture()
 def time():
-    return Time("Europe/Berlin", "+02:00")
+    return Time("Europe/Berlin")
 
 
 @pytest.mark.parametrize(
@@ -83,12 +83,16 @@ def time():
             datetime(2017, 10, 25, 10, 10, tzinfo=timezone(timedelta(seconds=7200))),
         ),
         (
-            "2017-10-25T10:10+01:00",
-            datetime(2017, 10, 25, 11, 10, tzinfo=timezone(timedelta(seconds=7200))),
+            "2021-10-29T10:10+02:00",
+            datetime(2021, 10, 29, 10, 10, tzinfo=timezone(timedelta(seconds=7200))),
+        ),
+        (
+            "2021-10-31T11:10+01:00",
+            datetime(2021, 10, 31, 11, 10, tzinfo=timezone(timedelta(seconds=3600))),
         ),
         (
             "2017-10-25T10:10+03:00",
-            datetime(2017, 10, 25, 9, 10, tzinfo=timezone(timedelta(seconds=7200))),
+            datetime(2017, 10, 25, 10, 10, tzinfo=timezone(timedelta(seconds=10800))),
         ),
     ],
 )
@@ -97,7 +101,7 @@ def test_str_to_datetime(time_fixture, test_input, expected):
 
 
 def test_utc_str_to_datetime():
-    time = Time("UTC", "+00:00")
+    time = Time("UTC")
     assert time.str_to_datetime("2017-10-25T10:10+03:00") == datetime(2017, 10, 25, 7, 10, tzinfo=ZoneInfo("UTC"))
 
 

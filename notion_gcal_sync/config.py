@@ -38,13 +38,11 @@ class Config:
         notion_token: str = None,
         notion_columns: dict = None,
         timezone_name: str = "Europe/Berlin",
-        timezone_diff: str = "+02:00",
     ):
         self.default_event_length = default_event_length
         self.no_date_action = no_date_action
         self.timezone_name = timezone_name
-        self.timezone_diff = timezone_diff
-        self.time = Time(timezone_name, timezone_diff)
+        self.time = Time(timezone_name)
         # GCAL
         self.gcal_calendars = gcal_calendars if gcal_calendars else {}
         self.gcal_default_calendar_name = gcal_default_calendar_name

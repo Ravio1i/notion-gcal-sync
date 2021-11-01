@@ -38,14 +38,13 @@ def config_dict_fixture(notion_columns_fixture):
         "notion_columns": notion_columns_fixture,
         "notion_database_url": "https://www.notion.so/***?v=***&p=",
         "notion_token": "SECRET",
-        "timezone_diff": "+02:00",
         "timezone_name": "Europe/Berlin",
     }
 
 
 @pytest.fixture(scope="module")
 def time_fixture():
-    return Time("Europe/Berlin", "+02:00")
+    return Time("Europe/Berlin")
 
 
 @pytest.fixture(scope="module")

@@ -1,14 +1,14 @@
 import logging
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+
+import pytz
 
 
 class Time:
-    def __init__(self, timezone_name: str, timezone_diff: str):
+    def __init__(self, timezone_name: str):
         self.timezone_name = timezone_name
-        self.timezone_diff = timezone_diff
-        hours, minutes = timezone_diff.split(":")
-        self.timezone_diff_delta = timedelta(hours=int(hours), minutes=int(minutes))
+        self.timezone = pytz.timezone(self.timezone_name)
 
     @staticmethod
     def is_date(dt: datetime or str) -> bool or None:
@@ -56,7 +56,4 @@ class Time:
             return datetime.fromisoformat(date_str)
 
         dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
-        offset = datetime.utcoffset(dt)
-        if offset is not None:
-            dt = dt + (self.timezone_diff_delta - offset)
-        return dt.replace(tzinfo=timezone(self.timezone_diff_delta))
+        return dt.astimezone(self.timezone)
