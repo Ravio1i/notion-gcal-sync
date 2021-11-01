@@ -1,6 +1,6 @@
 import pytest
 
-from events.GCalEvent import GCalEvent
+from notion_gcal_sync.events.GCalEvent import GCalEvent
 
 
 @pytest.mark.parametrize(
