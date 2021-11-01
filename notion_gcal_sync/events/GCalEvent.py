@@ -54,7 +54,7 @@ class GCalEvent(Event):
         time_start, time_end, time_last_updated = cls.get_time(obj, time)
         recurrent_event = cls.get_recurrent_event(obj)
         notion_page_url, time_last_synced, description = cls.get_meta(obj)
-        gcal_page_url = obj.get("htmlLink", "")
+        gcal_page_url = cls.get_gcal_page_url(obj)
         color_id = obj.get("colorId", "")
         read_only = obj.get("privateCopy", False)
         return cls(
@@ -114,6 +114,12 @@ class GCalEvent(Event):
     def get_recurrent_event(cls, obj: dict) -> str:
         """Get event id of original event if this event is occurrence of recurrence"""
         return obj.get("recurringEventId", "")
+
+    @staticmethod
+    def get_gcal_page_url(obj: dict):
+        url_full = obj.get("htmlLink", "")
+        url, _, _ = url_full.partition("&ctz=")
+        return url
 
     @property
     def body(self):

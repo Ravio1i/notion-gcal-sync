@@ -77,7 +77,6 @@ class GCalClient:
             print("Found {} events".format(gcal_event_count), end="\r")
 
             for event in gcal_events_res["items"]:
-
                 if event["status"] == "cancelled":
                     logging.debug('Event "{}" is  cancelled. Skipping...'.format(event.get("id", "")))
                     continue

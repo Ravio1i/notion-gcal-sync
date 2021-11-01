@@ -36,7 +36,7 @@ def create_gcal_events(
         notion_event = NotionEvent(**el.to_dict(), cfg=notion_client.cfg)
         # Update values to make sure they are filled when not defined
         notion_event.gcal_event_id = gcal_event_res["id"]
-        notion_event.gcal_page_url = gcal_event_res["htmlLink"]
+        notion_event.gcal_page_url = GCalEvent.get_gcal_page_url(gcal_event_res["htmlLink"])
         # Update on notion to be synchronized
         notion_event_res = notion_client.update_event(notion_event)
         if not notion_event_res:
@@ -66,7 +66,7 @@ def create_notion_events(
 
         logging.info('- Synchronize event "{}" in GCal'.format(el["name"]))
         gcal_event = GCalEvent(**el.to_dict(), cfg=gcal_client.cfg)
-        gcal_event.notion_page_url = notion_client.cfg.notion_database_url + notion_event_res["id"].replace("-", "")
+        gcal_event.notion_page_url = notion_event_res["url"]
         gcal_event_res = gcal_client.update_event(gcal_event)
         if not gcal_event_res:
             continue
