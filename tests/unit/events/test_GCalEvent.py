@@ -1,30 +1,18 @@
 import pytest
 
-
-@pytest.fixture
-def gcal_event_obj():
-    return {"id": "abc123", "summary": "title", "organizer": {}}
+from events.GCalEvent import GCalEvent
 
 
-def test_from_api():
-    pass
-
-
-# def test_get_meta():
-#     assert False
-#
-#
-# def test_get_time():
-#     assert False
-#
-#
-# def test_get_calendar():
-#     assert False
-#
-#
-# def test_get_recurrent_event():
-#     assert False
-#
-#
-# def test_body():
-#     assert False
+@pytest.mark.parametrize(
+    "test_url, expected",
+    [
+        ({"htmlLink": "https://www.google.com/calendar/event?eid=***"}, "https://www.google.com/calendar/event?eid=***"),
+        (
+            {"htmlLink": "https://www.google.com/calendar/event?eid=***&ctz=Europe/Berlin"},
+            "https://www.google.com/calendar/event?eid=***",
+        ),
+        ({}, ""),
+    ],
+)
+def test_get_gcal_page_url(test_url, expected):
+    assert GCalEvent.get_gcal_page_url(test_url) == expected
