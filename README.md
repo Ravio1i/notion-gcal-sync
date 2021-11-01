@@ -115,3 +115,7 @@ BE AWARE OF THE FOLLOWING:
 With around ~2500 events in gcal the sync:
 
 * to get all events took ~1min
+
+## Known Limitations
+
+* The Last update of an event of notion and google calendar are checked on minute base. When changing an event more then once within a minute and syncing right away
