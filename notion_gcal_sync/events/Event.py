@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from notion_gcal_sync.config import Config
 
@@ -13,8 +13,8 @@ class Event:
         gcal_event_id: str = None,
         gcal_calendar_name: str = None,
         gcal_calendar_id: str = None,
-        time_start: str or datetime = None,
-        time_end: str or datetime = None,
+        time_start: str or datetime or date = None,
+        time_end: str or datetime or date = None,
         recurrent_event: str = None,
         time_last_updated: datetime = None,
         time_last_synced: str = None,
