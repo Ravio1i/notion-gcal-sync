@@ -20,7 +20,7 @@ def test_get_name_invalid():
 
 def test_get_last_edited_time():
     column = "Last Edited Time"
-    time = Time(timezone_name="Europe/Berlin", timezone_diff="+02:00")
+    time = Time(timezone_name="Europe/Berlin")
     properties = {column: {"last_edited_time": "2021-10-01T11:37:00.000Z"}}
     expected = datetime(2021, 10, 1, 13, 37, tzinfo=timezone(timedelta(seconds=7200)))
     assert NotionEvent.get_last_edited_time(properties, column, time) == expected
