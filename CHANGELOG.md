@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.6 (2021-11-11)
+### Fix
+* Merge docker and ci #24 ([`3bbd733`](https://github.com/Ravio1i/notion-gcal-sync/commit/3bbd73391d686aad6fb3f0c8e64cf5364073be17))
+* Merge docker and ci ([`b591577`](https://github.com/Ravio1i/notion-gcal-sync/commit/b5915777c90d3bad3a86fd6d0618a52321c84dbe))
+
 ## v1.1.5 (2021-11-11)
 ### Fix
 * Use own pat to trigger another workflow #23 ([`9d1a37f`](https://github.com/Ravio1i/notion-gcal-sync/commit/9d1a37ff685bbd1f658e855319c1d8f9025cce46))
