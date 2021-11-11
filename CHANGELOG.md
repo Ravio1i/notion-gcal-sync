@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.4 (2021-11-11)
+### Fix
+* Add docker buildx #22 ([`1c62ca5`](https://github.com/Ravio1i/notion-gcal-sync/commit/1c62ca5ccb6a337ade033eb560b0b901c61de988))
+* Add docker buildx ([`638d855`](https://github.com/Ravio1i/notion-gcal-sync/commit/638d855f2f3e4fd7fb08a42c90456baed9a0482f))
+
 ## v1.1.3 (2021-11-11)
 ### Fix
 * Add env for docker release #21 ([`8c0b8a1`](https://github.com/Ravio1i/notion-gcal-sync/commit/8c0b8a1a19d32457b36cddf652c55bcef5a8008c))
