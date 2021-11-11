@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.7 (2021-11-11)
+### Fix
+* Add buildx #25 ([`8603891`](https://github.com/Ravio1i/notion-gcal-sync/commit/86038917008ab9b5151c2aecab5bd37121b93ef9))
+
 ## v1.1.6 (2021-11-11)
 ### Fix
 * Merge docker and ci #24 ([`3bbd733`](https://github.com/Ravio1i/notion-gcal-sync/commit/3bbd73391d686aad6fb3f0c8e64cf5364073be17))
