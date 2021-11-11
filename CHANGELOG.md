@@ -2,6 +2,24 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.2 (2021-11-11)
+### Fix
+* Adjust fixtures ([`5e25b2f`](https://github.com/Ravio1i/notion-gcal-sync/commit/5e25b2f8fac7d7fa63ad406bff405af8c57319ac))
+* Use string representation of datetime ([`7d1e7f6`](https://github.com/Ravio1i/notion-gcal-sync/commit/7d1e7f6f288c2d94fd54e6e50727e0caf5597b2e))
+* Gcal link usage and to delete boolean ([`6ef3c30`](https://github.com/Ravio1i/notion-gcal-sync/commit/6ef3c30010d62f131b330abf761c5b24d2d652cc))
+* Remove old timeezone_diff ([`f8688eb`](https://github.com/Ravio1i/notion-gcal-sync/commit/f8688eb26cb5eca4ca9cfe9cdfc46d0d2c236ddf))
+* Use dates as timezone.date ([`67845de`](https://github.com/Ravio1i/notion-gcal-sync/commit/67845deb72ffe990c4e113d58478b572516b57db))
+* Updating of urls ([`84d32ad`](https://github.com/Ravio1i/notion-gcal-sync/commit/84d32adad828432f966645709b2d4d5bf83146f7))
+* Updating of urls ([`b07f3e4`](https://github.com/Ravio1i/notion-gcal-sync/commit/b07f3e409760fcac3ba3696760fbd349d1d8f49c))
+* Remove unnessecary timezone diff ([`4747d3b`](https://github.com/Ravio1i/notion-gcal-sync/commit/4747d3bda81832f5d520919af4af1e864b689f8e))
+* Use client secrets in gcal lient ([`ea5803a`](https://github.com/Ravio1i/notion-gcal-sync/commit/ea5803a01c313c279b102fda86dd77f044fc3694))
+* Remove unnecessary stuff from container ([`e40c3b8`](https://github.com/Ravio1i/notion-gcal-sync/commit/e40c3b891dce79d0690315d7490ce4b0c9634782))
+* Owner of items in container ([`22f9833`](https://github.com/Ravio1i/notion-gcal-sync/commit/22f98333a66517b34510eda5382ffcba14064d27))
+* Client_secret instead of credential everywhere ([`05da839`](https://github.com/Ravio1i/notion-gcal-sync/commit/05da83980ed7cad21981614b3fead08e80ab3eac))
+
+### Documentation
+* Add known limitations ([`a014fb6`](https://github.com/Ravio1i/notion-gcal-sync/commit/a014fb630c3eb10838abee58ac63a7a514feefb5))
+
 ## v1.1.1 (2021-10-28)
 ### Fix
 * Docker image and update docs #16  ([`cfdad3a`](https://github.com/Ravio1i/notion-gcal-sync/commit/cfdad3ac8882108ce1646e834c021fe1dec61908))
