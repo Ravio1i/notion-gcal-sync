@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.5 (2021-11-11)
+### Fix
+* Use own pat to trigger another workflow #23 ([`9d1a37f`](https://github.com/Ravio1i/notion-gcal-sync/commit/9d1a37ff685bbd1f658e855319c1d8f9025cce46))
+* Use own pat to trigger another workflow ([`733a027`](https://github.com/Ravio1i/notion-gcal-sync/commit/733a027f67e9e0aac2cdb94a2c286dfbd956bd7a))
+
 ## v1.1.4 (2021-11-11)
 ### Fix
 * Add docker buildx #22 ([`1c62ca5`](https://github.com/Ravio1i/notion-gcal-sync/commit/1c62ca5ccb6a337ade033eb560b0b901c61de988))
