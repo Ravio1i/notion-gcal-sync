@@ -67,6 +67,23 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           poetry run semantic-release publish
+          echo "RELEASE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            latest
+            ${{ env.GITHUB_SHA_SHORT }}
