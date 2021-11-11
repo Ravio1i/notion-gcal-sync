@@ -33,7 +33,7 @@ def test_default_event_length(config_fixture):
         time_end=datetime(2021, 12, 10, 10, 30),
         cfg=config_fixture,
     )
-    assert event.time_end == datetime(2021, 12, 10, 11, 30)
+    assert event.time_end == "2021-12-10T11:30:00+01:00"
 
 
 def test_dict_from_class(event_fixture):
@@ -44,10 +44,10 @@ def test_dict_from_class(event_fixture):
         gcal_event_id="abc123",
         gcal_calendar_name="Default",
         gcal_calendar_id="dude@gmail.com",
-        time_start=datetime(2021, 8, 1, 12, 30),
-        time_end=datetime(2021, 8, 1, 14, 30),
+        time_start="2021-08-01T12:30:00+02:00",
+        time_end="2021-08-01T14:30:00+02:00",
         recurrent_event="",
-        time_last_updated=datetime(2021, 10, 1, 2, 30),
+        time_last_updated="2021-10-01T02:30:00+02:00",
         time_last_synced="2021-10-12T07:47",
         notion_page_url="https://www.notion.so",
         gcal_page_url="calendar.google.com",

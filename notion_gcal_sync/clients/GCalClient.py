@@ -34,8 +34,8 @@ class GCalClient:
             if credentials and credentials.expired and credentials.refresh_token:
                 credentials.refresh(Request())
             else:
-                credentials_path = os.path.join(CONFIG_PATH, "client_credentials.json")
-                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, scopes)
+                client_secret_path = os.path.join(CONFIG_PATH, "client_secret.json")
+                flow = InstalledAppFlow.from_client_secrets_file(client_secret_path, scopes)
                 credentials = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open(token_path, "w") as token:
@@ -77,7 +77,6 @@ class GCalClient:
             print("Found {} events".format(gcal_event_count), end="\r")
 
             for event in gcal_events_res["items"]:
-
                 if event["status"] == "cancelled":
                     logging.debug('Event "{}" is  cancelled. Skipping...'.format(event.get("id", "")))
                     continue
@@ -127,7 +126,7 @@ class GCalClient:
         # try:
         if gcal_event.read_only:
             logging.info('Not updating in gcal read only event "{}"'.format(gcal_event.name))
-            return
+            return None
         return (
             self.service.events()
             .update(

@@ -22,14 +22,14 @@ def test_empty_config():
 )
 def test_database_id(time_fixture, notion_columns_fixture, test_url, expected):
     config = Config(
-        60,
-        "skip",
-        {"Default": "dude@gmail.com"},
-        "Default",
-        test_url,
-        "SECRET",
-        notion_columns_fixture,
-        time_fixture,
+        default_event_length=60,
+        no_date_action="skip",
+        gcal_calendars={"Default": "dude@gmail.com"},
+        gcal_default_calendar_name="Default",
+        notion_database_url=test_url,
+        notion_token="SECRET",
+        notion_columns=notion_columns_fixture,
+        timezone_name="Europe/Berlin",
     )
     assert config.notion_database_id == expected
 

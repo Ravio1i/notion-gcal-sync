@@ -88,7 +88,7 @@ If you want to update the setup within the cli or only map the credentials, you'
 
 ```yaml
 docker run --net=host -it \
-     -v ~/.notion-gcal-sync/client_credentials.json:/home/worker/notion-gcal-sync/client_credentials.json \
+     -v ~/.notion-gcal-sync/client_secret.json:/home/worker/notion-gcal-sync/client_secret.json \
      notion-gcal-sync
 ```
 
@@ -115,3 +115,7 @@ BE AWARE OF THE FOLLOWING:
 With around ~2500 events in gcal the sync:
 
 * to get all events took ~1min
+
+## Known Limitations
+
+* The Last update of an event of notion and google calendar are checked on minute base. When changing an event more then once within a minute and syncing right away

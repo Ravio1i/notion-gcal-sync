@@ -12,12 +12,12 @@ class NotionClient:
         self.cfg = cfg
         self.client = Client(auth=self.cfg.notion_token)
 
-    def list_events(self, delete: bool = False):
+    def list_events(self):
         cursor = None
         notion_event_items = []
         notion_event_count = 0
         while True:
-            notion_event_res = self.query_items(delete, cursor=cursor)
+            notion_event_res = self.query_items(cursor=cursor)
             notion_event_count += len(notion_event_res["results"])
             print("Found {} events".format(notion_event_count), end="\r")
             for i, obj in enumerate(notion_event_res["results"]):
@@ -43,12 +43,11 @@ class NotionClient:
         logging.info("Found {} event(s) in Notion".format(len(notion_event_items)))
         return notion_event_items
 
-    def query_items(self, delete: bool = False, cursor: str = None):
+    def query_items(self, cursor: str = None):
         body = {
             "database_id": self.cfg.notion_database_id,
             "filter": {
                 "and": [
-                    {"property": self.cfg.notion_columns["to_delete"], "checkbox": {"equals": delete}},
                     {"property": self.cfg.notion_columns["deleted"], "checkbox": {"equals": False}},
                 ]
             },
@@ -60,11 +59,14 @@ class NotionClient:
 
     def create_event(self, notion_event: NotionEvent) -> dict:
         header = {"parent": {"database_id": self.cfg.notion_database_id}}
-        return self.client.pages.create(**header, **notion_event.body())
+        return self.client.pages.create(**header, **notion_event.body)
 
-    def update_event(self, notion_event: NotionEvent) -> dict:
+    def update_event(self, notion_event: NotionEvent) -> dict or None:
         """This checks off that the event has been put on Google Calendar"""
-        return self.client.pages.update(notion_event.notion_id, **notion_event.body())
+        if notion_event.to_delete:
+            logging.info('- Not updating notion "to delete" event "{}"'.format(notion_event.name))
+            return None
+        return self.client.pages.update(notion_event.notion_id, **notion_event.body)
 
     def delete_event(self, notion_event: NotionEvent) -> dict:
         """Currently only puts match to True as notion api does not support delete"""
@@ -79,8 +81,8 @@ class NotionClient:
         )
 
     def update_gcal_link(self, notion_event: NotionEvent, gcal_gcal_page_url: str):
-        if gcal_gcal_page_url == notion_event.gcal_page_url.replace("&ctz=" + self.cfg.timezone_name, ""):
+        if gcal_gcal_page_url == notion_event.gcal_page_url:
             return
         logging.info('- Updating gcal page url for event "{}" in Notion'.format(notion_event.name))
-        notion_event.gcal_page_url = gcal_gcal_page_url + "&ctz=" + self.cfg.timezone_name
+        notion_event.gcal_page_url = gcal_gcal_page_url
         self.update_event(notion_event)

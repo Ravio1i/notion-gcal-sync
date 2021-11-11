@@ -1,5 +1,17 @@
 .idea/
 .vscode
+.gitignore
+.coverage
+__pycache__
+
+tests
+.eggs
+.github
+.pytest_cache
+.venv
+dist
+build
+notion_gcal_sync.egg-info
 
 **/config.yml
 **/client_credentials.json

@@ -49,28 +49,28 @@ def test_config_file_created(mocker, path_exists, create_config_path, expected):
     "credentials_path_exists, token_path_exists, expected",
     [(False, False, False), (False, True, True), (True, False, False), (True, True, True)],
 )
-def test_credentials_created(mocker, credentials_path_exists, token_path_exists, expected):
+def test_client_secret_created(mocker, credentials_path_exists, token_path_exists, expected):
     def path_exists(path):
         if path == install.TOKEN_FILE:
             return token_path_exists
-        if path == install.CREDENTIALS_FILE:
+        if path == install.CLIENT_SECRET_FILE:
             return credentials_path_exists
 
     mocker.patch("os.path.exists", side_effect=path_exists)
     mocker.patch("notion_gcal_sync.clients.GCalClient.GCalClient.get_credentials")
-    assert install.credentials_created() is expected
+    assert install.client_secret_created() is expected
 
 
 def test_configure(mocker, config_dict_fixture):
     mocker.patch("notion_gcal_sync.install.config_path_created", return_value=True)
     mocker.patch("notion_gcal_sync.install.config_file_created", return_value=True)
-    mocker.patch("notion_gcal_sync.install.credentials_created", return_value=True)
+    mocker.patch("notion_gcal_sync.install.client_secret_created", return_value=True)
     mocker.patch("builtins.open", mocker.mock_open(read_data=str(config_dict_fixture)))
     assert install.configure().to_dict() == config_dict_fixture
 
 
 @pytest.mark.parametrize(
-    "config_path_created, config_file_created, credentials_created",
+    "config_path_created, config_file_created, client_secret_created",
     [
         (False, False, False),
         (False, False, True),
@@ -80,9 +80,9 @@ def test_configure(mocker, config_dict_fixture):
         (True, True, False),
     ],
 )
-def test_configure_not_confirmed(mocker, config_path_created, config_file_created, credentials_created):
+def test_configure_not_confirmed(mocker, config_path_created, config_file_created, client_secret_created):
     mocker.patch("notion_gcal_sync.install.config_path_created", return_value=config_path_created)
     mocker.patch("notion_gcal_sync.install.config_file_created", return_value=config_file_created)
-    mocker.patch("notion_gcal_sync.install.credentials_created", return_value=credentials_created)
+    mocker.patch("notion_gcal_sync.install.client_secret_created", return_value=client_secret_created)
     with pytest.raises(SystemExit):
         install.configure()

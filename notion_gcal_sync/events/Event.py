@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from notion_gcal_sync.config import Config
 
@@ -13,8 +13,8 @@ class Event:
         gcal_event_id: str = None,
         gcal_calendar_name: str = None,
         gcal_calendar_id: str = None,
-        time_start: str or datetime = None,
-        time_end: str or datetime = None,
+        time_start: str or datetime or date = None,
+        time_end: str or datetime or date = None,
         recurrent_event: str = None,
         time_last_updated: datetime = None,
         time_last_synced: str = None,
@@ -35,8 +35,8 @@ class Event:
         if self.gcal_calendar_name != self.cfg.get_calendar_name(self.gcal_calendar_id):
             self.gcal_calendar_id = self.cfg.get_calendar_id(self.gcal_calendar_name)
 
-        self.time_start = self.cfg.time.to_datetime(time_start)
-        self.time_end = self.cfg.time.to_datetime(time_end)
+        self.time_start = self.cfg.time.format(time_start)
+        self.time_end = self.cfg.time.format(time_end)
         # Apply default length when no end is specified but a time is given
         if (
             self.time_start
@@ -45,10 +45,12 @@ class Event:
             and not self.cfg.time.is_date(self.time_end)
             and self.time_start == self.time_end
         ):
-            self.time_end = self.time_start + timedelta(minutes=self.cfg.default_event_length)
+            self.time_end = self.cfg.time.to_str(
+                self.cfg.time.to_datetime(self.time_start) + timedelta(minutes=self.cfg.default_event_length)
+            )
 
         self.recurrent_event = recurrent_event
-        self.time_last_updated = time_last_updated
+        self.time_last_updated = self.cfg.time.format(time_last_updated)
         self.time_last_synced = time_last_synced
         self.notion_page_url = notion_page_url
         self.gcal_page_url = gcal_page_url

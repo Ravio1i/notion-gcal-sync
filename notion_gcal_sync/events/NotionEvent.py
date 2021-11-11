@@ -3,7 +3,6 @@ from datetime import datetime
 
 from notion_gcal_sync.config import Config
 from notion_gcal_sync.events.Event import Event
-from notion_gcal_sync.utils import Time
 
 
 class NotionEvent(Event):
@@ -24,6 +23,7 @@ class NotionEvent(Event):
         gcal_page_url: str = None,
         notion_id: str = None,
         read_only: bool = None,
+        to_delete: bool = None,
         cfg: Config = None,
     ):
         super().__init__(
@@ -43,8 +43,17 @@ class NotionEvent(Event):
             read_only,
             cfg,
         )
+        self.to_delete = to_delete
         self.notion_id = notion_id
         # self.tags = tags
+
+    @property
+    def to_delete(self):
+        return self._to_delete
+
+    @to_delete.setter
+    def to_delete(self, value):
+        self._to_delete = True if value in [True, "True"] else False
 
     @classmethod
     def from_api(cls, obj: dict, cfg: Config):
@@ -55,7 +64,7 @@ class NotionEvent(Event):
         location = cls.get_text(props, cfg.notion_columns["location"])
         time_start, time_end = cls.get_time(props, cfg.notion_columns["date"])
         recurrent_event = cls.get_text(props, cfg.notion_columns["recurrent_event"])
-        time_last_updated = cls.get_last_edited_time(props, cfg.notion_columns["last_updated_time"], cfg.time)
+        time_last_updated = cls.get_last_edited_time(props, cfg.notion_columns["last_updated_time"])
         time_last_synced = cls.get_text(props, cfg.notion_columns["last_synced_time"])
         description = cls.get_text(props, cfg.notion_columns["description"])
         gcal_event_id = cls.get_text(props, cfg.notion_columns["gcal_event_id"])
@@ -63,6 +72,7 @@ class NotionEvent(Event):
         gcal_calendar_name = cls.get_select(props, cfg.notion_columns["gcal_calendar_name"])
         gcal_calendar_id = cls.get_select(props, cfg.notion_columns["gcal_calendar_id"])
         read_only = cls.get_checkbox(props, cfg.notion_columns["read_only"])
+        to_delete = cls.get_checkbox(props, cfg.notion_columns["to_delete"])
         # tags = cls.get_multiselect(props, cfg.col_tags)
         return cls(
             name,
@@ -80,6 +90,7 @@ class NotionEvent(Event):
             gcal_page_url,
             notion_id,
             read_only,
+            to_delete,
             cfg,
         )
 
@@ -92,10 +103,9 @@ class NotionEvent(Event):
             return ""
 
     @classmethod
-    def get_last_edited_time(cls, properties: dict, column, time: Time) -> datetime:
+    def get_last_edited_time(cls, properties: dict, column) -> datetime:
         last_edited = properties.get(column, {})["last_edited_time"]
-        last_edited_date = time.to_datetime(last_edited)
-        return last_edited_date
+        return last_edited
 
     @classmethod
     def get_time(cls, properties: dict, column: str) -> (str, str):
@@ -140,21 +150,20 @@ class NotionEvent(Event):
         except KeyError:
             return False
 
+    @property
     def body(self) -> dict:
-        if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
-            time_start = self.cfg.time.datetime_to_str_date(self.time_start)
-            time_end = self.cfg.time.datetime_to_str_date(self.time_end)
-        else:
-            time_start = self.cfg.time.datetime_to_str(self.time_start)
-            time_end = self.cfg.time.datetime_to_str(self.time_end)
+        # if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
+        #     time_start = self.cfg.time.date_to_str(self.time_start)
+        #     time_end = self.cfg.time.date_to_str(self.time_end)
+        # else:
+        #     time_start = self.cfg.time.datetime_to_str(self.time_start)
+        #     time_end = self.cfg.time.datetime_to_str(self.time_end)
 
-        if self.time_start == self.time_end:
-            time_end = None
-
+        time_end = None if self.time_start == self.time_end else self.time_end
         body = {
             "properties": {
                 self.cfg.notion_columns["name"]: {"title": [{"text": {"content": self.name}}]},
-                self.cfg.notion_columns["date"]: {"date": {"start": time_start, "end": time_end}},
+                self.cfg.notion_columns["date"]: {"date": {"start": self.time_start, "end": time_end}},
                 self.cfg.notion_columns["recurrent_event"]: {"rich_text": [{"text": {"content": self.recurrent_event}}]},
                 self.cfg.notion_columns["description"]: {"rich_text": [{"text": {"content": self.description}}]},
                 self.cfg.notion_columns["gcal_calendar_id"]: {"select": {"name": self.gcal_calendar_id}},

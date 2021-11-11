@@ -54,7 +54,7 @@ class GCalEvent(Event):
         time_start, time_end, time_last_updated = cls.get_time(obj, time)
         recurrent_event = cls.get_recurrent_event(obj)
         notion_page_url, time_last_synced, description = cls.get_meta(obj)
-        gcal_page_url = obj.get("htmlLink", "")
+        gcal_page_url = cls.get_gcal_page_url(obj)
         color_id = obj.get("colorId", "")
         read_only = obj.get("privateCopy", False)
         return cls(
@@ -92,7 +92,7 @@ class GCalEvent(Event):
 
     @classmethod
     def get_time(cls, obj: dict, time: Time) -> (datetime, datetime):
-        time_last_updated = time.to_datetime(obj.get("updated"))
+        time_last_updated = obj.get("updated")
         try:
             time_start = obj.get("start", {})["dateTime"]
             time_end = obj.get("end", {})["dateTime"]
@@ -115,6 +115,12 @@ class GCalEvent(Event):
         """Get event id of original event if this event is occurrence of recurrence"""
         return obj.get("recurringEventId", "")
 
+    @staticmethod
+    def get_gcal_page_url(obj: dict):
+        url_full = obj.get("htmlLink", "")
+        url, _, _ = url_full.partition("&ctz=")
+        return url
+
     @property
     def body(self):
         body = {
@@ -128,26 +134,28 @@ class GCalEvent(Event):
         # utils is just a date
         if Time.is_date(self.time_start) and Time.is_date(self.time_end):
             logging.debug('Updating end of date of "{}" by one day to get all day event'.format(self.name))
-            time_end = self.time_end + timedelta(days=1)
+            time_end = self.cfg.time.to_str(self.cfg.time.to_datetime(self.time_end) + timedelta(days=1))
 
         if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
             body["start"] = {
-                "date": self.cfg.time.datetime_to_str_date(self.time_start),
+                "date": self.time_start,
                 "timeZone": self.cfg.time.timezone_name,
             }
             body["end"] = {
-                "date": self.cfg.time.datetime_to_str_date(time_end),
+                "date": time_end,
                 "timeZone": self.cfg.time.timezone_name,
             }
-        else:
-            body["start"] = {
-                "dateTime": self.cfg.time.datetime_to_str(self.time_start),
-                "timeZone": self.cfg.time.timezone_name,
-            }
-            body["end"] = {
-                "dateTime": self.cfg.time.datetime_to_str(time_end),
-                "timeZone": self.cfg.time.timezone_name,
-            }
+            logging.info(body)
+            return body
+
+        body["start"] = {
+            "dateTime": self.time_start,
+            "timeZone": self.cfg.time.timezone_name,
+        }
+        body["end"] = {
+            "dateTime": time_end,
+            "timeZone": self.cfg.time.timezone_name,
+        }
 
         logging.info(body)
         return body

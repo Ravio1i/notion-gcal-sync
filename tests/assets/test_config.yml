@@ -4,7 +4,6 @@ default_event_length: 60
 no_date_action: 'skip' # ['skip', 'today']
 
 timezone_name: 'Europe/Berlin'
-timezone_diff: '+02:00'
 
 gcal_calendars:
   Default: '***@gmail.com'
