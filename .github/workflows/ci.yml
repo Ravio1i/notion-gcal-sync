@@ -29,7 +29,7 @@ jobs:
       shell: bash
       run: |
         python -m poetry config virtualenvs.in-project true
-        python -m poetry install
+        python -m poetry install --no-root
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
