@@ -68,5 +68,5 @@ jobs:
           git config user.email github-actions@github.com
           poetry run semantic-release publish
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
