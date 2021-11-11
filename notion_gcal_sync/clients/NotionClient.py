@@ -12,7 +12,7 @@ class NotionClient:
         self.cfg = cfg
         self.client = Client(auth=self.cfg.notion_token)
 
-    def list_events(self, delete: bool = False):
+    def list_events(self):
         cursor = None
         notion_event_items = []
         notion_event_count = 0

@@ -3,7 +3,6 @@ from datetime import datetime
 
 from notion_gcal_sync.config import Config
 from notion_gcal_sync.events.Event import Event
-from notion_gcal_sync.utils import Time
 
 
 class NotionEvent(Event):
@@ -65,7 +64,7 @@ class NotionEvent(Event):
         location = cls.get_text(props, cfg.notion_columns["location"])
         time_start, time_end = cls.get_time(props, cfg.notion_columns["date"])
         recurrent_event = cls.get_text(props, cfg.notion_columns["recurrent_event"])
-        time_last_updated = cls.get_last_edited_time(props, cfg.notion_columns["last_updated_time"], cfg.time)
+        time_last_updated = cls.get_last_edited_time(props, cfg.notion_columns["last_updated_time"])
         time_last_synced = cls.get_text(props, cfg.notion_columns["last_synced_time"])
         description = cls.get_text(props, cfg.notion_columns["description"])
         gcal_event_id = cls.get_text(props, cfg.notion_columns["gcal_event_id"])
@@ -104,10 +103,9 @@ class NotionEvent(Event):
             return ""
 
     @classmethod
-    def get_last_edited_time(cls, properties: dict, column, time: Time) -> datetime:
+    def get_last_edited_time(cls, properties: dict, column) -> datetime:
         last_edited = properties.get(column, {})["last_edited_time"]
-        last_edited_date = time.to_datetime(last_edited)
-        return last_edited_date
+        return last_edited
 
     @classmethod
     def get_time(cls, properties: dict, column: str) -> (str, str):
@@ -154,20 +152,18 @@ class NotionEvent(Event):
 
     @property
     def body(self) -> dict:
-        if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
-            time_start = self.cfg.time.datetime_to_str_date(self.time_start)
-            time_end = self.cfg.time.datetime_to_str_date(self.time_end)
-        else:
-            time_start = self.cfg.time.datetime_to_str(self.time_start)
-            time_end = self.cfg.time.datetime_to_str(self.time_end)
+        # if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
+        #     time_start = self.cfg.time.date_to_str(self.time_start)
+        #     time_end = self.cfg.time.date_to_str(self.time_end)
+        # else:
+        #     time_start = self.cfg.time.datetime_to_str(self.time_start)
+        #     time_end = self.cfg.time.datetime_to_str(self.time_end)
 
-        if self.time_start == self.time_end:
-            time_end = None
-
+        time_end = None if self.time_start == self.time_end else self.time_end
         body = {
             "properties": {
                 self.cfg.notion_columns["name"]: {"title": [{"text": {"content": self.name}}]},
-                self.cfg.notion_columns["date"]: {"date": {"start": time_start, "end": time_end}},
+                self.cfg.notion_columns["date"]: {"date": {"start": self.time_start, "end": time_end}},
                 self.cfg.notion_columns["recurrent_event"]: {"rich_text": [{"text": {"content": self.recurrent_event}}]},
                 self.cfg.notion_columns["description"]: {"rich_text": [{"text": {"content": self.description}}]},
                 self.cfg.notion_columns["gcal_calendar_id"]: {"select": {"name": self.gcal_calendar_id}},

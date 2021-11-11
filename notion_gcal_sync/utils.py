@@ -11,6 +11,26 @@ class Time:
         self.timezone = pendulum.timezone(self.timezone_name)
 
     @staticmethod
+    def now() -> str:
+        return datetime.now().isoformat("T", "minutes")
+
+    @staticmethod
+    def format_str(dt: str) -> str or None:
+        """Change Z indicator for UTC with +00:00"""
+        if not dt:
+            logging.error("Date {} is not str format".format(dt))
+            return None
+        return dt.replace("Z", "+00:00")
+
+    @staticmethod
+    def format_datetime(dt: datetime) -> datetime or None:
+        """We do not need seconds and microseconds"""
+        if not dt:
+            logging.error("Date {} is not datetime format".format(dt))
+            return None
+        return dt.replace(second=0, microsecond=0)
+
+    @staticmethod
     def is_date(dt: datetime or str) -> bool or None:
         """Return if date range is just a date without time"""
         if type(dt) == str:
@@ -23,42 +43,34 @@ class Time:
         logging.error("Date {} is in some other format".format(dt))
         return None
 
-    @staticmethod
-    def datetime_to_str(dt: datetime) -> str or None:
-        if type(dt) != datetime:
-            return None
-        return dt.isoformat("T", "seconds")
-
-    @staticmethod
-    def datetime_to_str_date(dt: datetime) -> str or None:
-        if not dt:
-            return None
-        return dt.strftime("%Y-%m-%d")
-
-    @staticmethod
-    def now() -> str:
-        return datetime.now().isoformat("T", "minutes")
-
-    def to_datetime(self, dt: str or datetime or date) -> datetime or date or None:
-        if type(dt) == datetime or type(dt) == date:
-            return dt
+    def to_str(self, dt: str or datetime or date):
         if type(dt) == str:
-            return self.str_to_datetime(dt)
+            return self.format_str(dt)
+        if type(dt) == date:
+            return dt.strftime("%Y-%m-%d")
+        if type(dt) == datetime:
+            return dt.isoformat("T", "seconds")
         logging.error("Date {} is in some other format".format(dt))
         return None
 
-    def str_to_datetime(self, date_str: str) -> datetime or date or None:
-        if not date_str:
-            return None
+    def to_datetime(self, dt: str or datetime or date) -> datetime or date or None:
+        if type(dt) == date:
+            return dt
+        if type(dt) == datetime:
+            return self.format_datetime(dt)
+        if type(dt) == str:
+            dt = self.format_str(dt)
+            if self.is_date(dt):
+                return datetime.strptime(dt, "%Y-%m-%d").date()
+            dt = self.format_datetime(datetime.fromisoformat(dt))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=self.timezone)
+            dt = dt.astimezone(self.timezone)
+            return dt
+        logging.error("Date {} is in some other format".format(dt))
+        return None
 
-        # Replace UTC with +00:00
-        date_str = date_str.replace("Z", "+00:00")
-
-        if self.is_date(date_str):
-            return datetime.strptime(date_str, "%Y-%m-%d").date()
-
-        dt = datetime.fromisoformat(date_str).replace(second=0, microsecond=0)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=self.timezone)
-        dt = dt.astimezone(self.timezone)
+    def format(self, dt: str or datetime or date) -> str or None:
+        dt = self.to_datetime(dt)
+        dt = self.to_str(dt)
         return dt

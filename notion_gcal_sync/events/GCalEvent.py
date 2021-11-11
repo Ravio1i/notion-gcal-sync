@@ -92,7 +92,7 @@ class GCalEvent(Event):
 
     @classmethod
     def get_time(cls, obj: dict, time: Time) -> (datetime, datetime):
-        time_last_updated = time.to_datetime(obj.get("updated"))
+        time_last_updated = obj.get("updated")
         try:
             time_start = obj.get("start", {})["dateTime"]
             time_end = obj.get("end", {})["dateTime"]
@@ -134,26 +134,28 @@ class GCalEvent(Event):
         # utils is just a date
         if Time.is_date(self.time_start) and Time.is_date(self.time_end):
             logging.debug('Updating end of date of "{}" by one day to get all day event'.format(self.name))
-            time_end = self.time_end + timedelta(days=1)
+            time_end = self.cfg.time.to_str(self.cfg.time.to_datetime(self.time_end) + timedelta(days=1))
 
         if self.cfg.time.is_date(self.time_start) and self.cfg.time.is_date(self.time_end):
             body["start"] = {
-                "date": self.cfg.time.datetime_to_str_date(self.time_start),
+                "date": self.time_start,
                 "timeZone": self.cfg.time.timezone_name,
             }
             body["end"] = {
-                "date": self.cfg.time.datetime_to_str_date(time_end),
+                "date": time_end,
                 "timeZone": self.cfg.time.timezone_name,
             }
-        else:
-            body["start"] = {
-                "dateTime": self.cfg.time.datetime_to_str(self.time_start),
-                "timeZone": self.cfg.time.timezone_name,
-            }
-            body["end"] = {
-                "dateTime": self.cfg.time.datetime_to_str(time_end),
-                "timeZone": self.cfg.time.timezone_name,
-            }
+            logging.info(body)
+            return body
+
+        body["start"] = {
+            "dateTime": self.time_start,
+            "timeZone": self.cfg.time.timezone_name,
+        }
+        body["end"] = {
+            "dateTime": time_end,
+            "timeZone": self.cfg.time.timezone_name,
+        }
 
         logging.info(body)
         return body
