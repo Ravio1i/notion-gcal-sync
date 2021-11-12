@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.8 (2021-11-12)
+### Fix
+* Use poetry to install package in container #26 ([`19e6970`](https://github.com/Ravio1i/notion-gcal-sync/commit/19e6970161cce4a2aff45fcfc0aedcf2d3f20b55))
+* Use poetry to install package in container ([`f69a5a0`](https://github.com/Ravio1i/notion-gcal-sync/commit/f69a5a02c5af25ed0ded20ee45edf0275add3743))
+
 ## v1.1.7 (2021-11-11)
 ### Fix
 * Add buildx #25 ([`8603891`](https://github.com/Ravio1i/notion-gcal-sync/commit/86038917008ab9b5151c2aecab5bd37121b93ef9))
