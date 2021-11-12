@@ -12,9 +12,8 @@ RUN chown -R $USER:$USER "/home/$USER"
 
 USER $USER
 
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install pip==21.3.1 poetry==1.1.11
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-dev
 
-ENV PYTHONPATH "/home/$USER"
-
-ENTRYPOINT ["python", "notion_gcal_sync/__main__.py"]
+ENTRYPOINT ["notion-gcal-sync"]
