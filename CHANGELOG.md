@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.11 (2021-11-13)
+### Fix
+* Repo owner in lowercase #29 ([`f3e5b1f`](https://github.com/Ravio1i/notion-gcal-sync/commit/f3e5b1f1118d0c15864963aa7df972ce4b4df43e))
+* Repo owner in lowercase ([`42e3903`](https://github.com/Ravio1i/notion-gcal-sync/commit/42e3903fd71f98cdbf9205ae7695777816bd6a9e))
+
 ## v1.1.10 (2021-11-13)
 ### Fix
 * Use new syntax for build-push-action@v2 #28 ([`d8b62cb`](https://github.com/Ravio1i/notion-gcal-sync/commit/d8b62cb2c6b83036729a99177f4cb5c12f9337b9))
