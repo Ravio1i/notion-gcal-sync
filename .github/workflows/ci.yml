@@ -89,5 +89,7 @@ jobs:
           context: .
           push: true
           tags: |
-            latest
-            ${{ env.RELEASE_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_NAME }}
+          secrets: |
+            GIT_AUTH_TOKEN=${{ github.token }}
