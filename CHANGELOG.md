@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.10 (2021-11-13)
+### Fix
+* Use new syntax for build-push-action@v2 #28 ([`d8b62cb`](https://github.com/Ravio1i/notion-gcal-sync/commit/d8b62cb2c6b83036729a99177f4cb5c12f9337b9))
+* Use new syntax for build-push-action@v2 ([`65579a4`](https://github.com/Ravio1i/notion-gcal-sync/commit/65579a4c3f7abd5353bfec855faf5ed6e2c54357))
+
 ## v1.1.9 (2021-11-13)
 ### Fix
 * Use github token and right variable #27 ([`cf65505`](https://github.com/Ravio1i/notion-gcal-sync/commit/cf65505006067f39e9b8ca25ada23f77bb775de8))
