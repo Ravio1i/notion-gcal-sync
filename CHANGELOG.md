@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.12 (2021-11-13)
+### Fix
+* Image name in lowercase #30 ([`4e6f3aa`](https://github.com/Ravio1i/notion-gcal-sync/commit/4e6f3aaa2715c20b33c2a5082739e88ae7b76906))
+* Image name in lowercase ([`c5f0fd1`](https://github.com/Ravio1i/notion-gcal-sync/commit/c5f0fd129c6d3575a82294cbc60cb86d2238184d))
+
 ## v1.1.11 (2021-11-13)
 ### Fix
 * Repo owner in lowercase #29 ([`f3e5b1f`](https://github.com/Ravio1i/notion-gcal-sync/commit/f3e5b1f1118d0c15864963aa7df972ce4b4df43e))
