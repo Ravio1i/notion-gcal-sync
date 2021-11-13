@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.9 (2021-11-13)
+### Fix
+* Use github token and right variable #27 ([`cf65505`](https://github.com/Ravio1i/notion-gcal-sync/commit/cf65505006067f39e9b8ca25ada23f77bb775de8))
+* Use github token and right variable ([`0122f07`](https://github.com/Ravio1i/notion-gcal-sync/commit/0122f07913302db25dba8bb6609719c9ed7d9d58))
+
 ## v1.1.8 (2021-11-12)
 ### Fix
 * Use poetry to install package in container #26 ([`19e6970`](https://github.com/Ravio1i/notion-gcal-sync/commit/19e6970161cce4a2aff45fcfc0aedcf2d3f20b55))
