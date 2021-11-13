@@ -11,7 +11,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   Test:
@@ -67,12 +66,16 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           poetry run semantic-release publish
-          echo "RELEASE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
-          echo "REPO_OWNER=${OWNER,,}" >>${GITHUB_ENV}
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-          OWNER: '${{ github.repository_owner }}'
+
+      - name: Set env variables
+        run: |
+          echo "RELEASE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${REPO_NAME,,}" >> ${GITHUB_ENV}
+        env:
+          REPO_NAME: ${{ github.repository }}
 
       - name: Set up Docker Buildx
         id: buildx
@@ -91,7 +94,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.RELEASE_NAME }}
           secrets: |
             GIT_AUTH_TOKEN=${{ github.token }}
